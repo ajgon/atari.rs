@@ -17,7 +17,7 @@ pub struct Register {
 
 impl Register {
     pub fn new() -> Register {
-        return Register { pc: 0x0000, s: 0xFF, a: 0x00, x: 0x00, y: 0x00, p: 0b0010_0000 };
+        return Register { pc: 0x0000, s: 0xFF, a: 0x00, x: 0x00, y: 0x00, p: 0b0011_0000 };
     }
 
     pub fn pc(&self) -> u16 {
@@ -42,7 +42,6 @@ impl Register {
 
     pub fn set_accumulator(&mut self, value: u8) {
         self.a = value;
-        self.set_negative_bit(value > 127);
     }
 
     pub fn x(&self) -> u8 {
@@ -61,8 +60,8 @@ impl Register {
         return self.p & 0b00000001 != 0;
     }
 
-    pub fn bcd_bit(&self) -> bool {
-        return self.p & 0b00010000 != 0;
+    pub fn decimal_bit(&self) -> bool {
+        return self.p & 0b00001000 != 0;
     }
 
     pub fn set_negative_bit(&mut self, value: bool) {
@@ -81,11 +80,11 @@ impl Register {
         }
     }
 
-    pub fn set_bcd_bit(&mut self, value: bool) {
+    pub fn set_decimal_bit(&mut self, value: bool) {
         if value {
-            self.p |= 0b00010000;
+            self.p |= 0b00001000;
         } else {
-            self.p &= 0b11101111;
+            self.p &= 0b11110111;
         }
     }
 
@@ -118,7 +117,7 @@ mod tests {
         assert_eq!(register.a(), 0x00);
         assert_eq!(register.x(), 0x00);
         assert_eq!(register.y(), 0x00);
-        assert_eq!(register.p(), 0x20);
+        assert_eq!(register.p(), 0x30);
     }
 
     #[test]

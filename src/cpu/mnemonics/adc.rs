@@ -22,7 +22,7 @@ ADC  Add Memory to Accumulator with Carry
 
 use crate::cpu::mnemonics::Mnemonic;
 use crate::cpu::register::Register;
-use crate::cpu::math::calculate;
+//use crate::cpu::alu::add;
 
 #[derive(Debug)]
 pub struct Adc {
@@ -81,7 +81,7 @@ mod tests {
         adc.call(arguments, &mut register);
 
         assert_eq!(register.a(), 0x44);
-        assert_eq!(register.p(), 0b00100000);
+        assert_eq!(register.p(), 0b00110000);
     }
 
     #[test]
@@ -95,7 +95,7 @@ mod tests {
         adc.call(arguments, &mut register);
 
         assert_eq!(register.a(), 0x45);
-        assert_eq!(register.p(), 0b00100000);
+        assert_eq!(register.p(), 0b00110000);
     }
 }
 

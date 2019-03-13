@@ -1,6 +1,6 @@
 mod mnemonics;
 mod register;
-mod math;
+mod alu;
 
 use mnemonics::Mnemonics;
 use register::Register;
@@ -24,7 +24,7 @@ impl Cpu {
     pub fn process_byte(&mut self, byte: u8) {
         let opcode = if self.current_instruction.len() > 0 { self.current_instruction[0] } else { byte };
         let mnemonic = self.mnemonics.resolve_mnemonic_from_opcode(opcode);
-        let (bytes, cycles) = mnemonic.determine_bytes_and_cycles();
+        let (bytes, _cycles) = mnemonic.determine_bytes_and_cycles();
 
         self.current_instruction.push(byte);
 
