@@ -103,6 +103,14 @@ impl Register {
             self.p &= 0b11111110;
         }
     }
+
+    pub fn set_x(&mut self, value: u8) {
+        self.x = value;
+    }
+
+    pub fn set_y(&mut self, value: u8) {
+        self.y = value;
+    }
 }
 
 #[cfg(test)]

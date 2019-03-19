@@ -22,7 +22,10 @@ ADC  Add Memory to Accumulator with Carry
 
 use crate::cpu::mnemonics::Mnemonic;
 use crate::cpu::register::Register;
-//use crate::cpu::alu::add;
+use crate::message_bus::MessageBus;
+use crate::message_bus::MessageBusTarget;
+use crate::message_bus::MessageBusMessage;
+use crate::cpu::alu::add;
 
 #[derive(Debug)]
 pub struct Adc {
@@ -38,6 +41,7 @@ impl Adc {
 
 impl Mnemonic for Adc {
     fn determine_bytes_and_cycles(&self) -> (usize, u8) {
+        // @todo implement cycles change when page boundary is crossed
         return match self.opcode {
             0x69 => (2, 2),
             0x65 => (2, 3),
@@ -51,17 +55,60 @@ impl Mnemonic for Adc {
         }
     }
 
-    fn call(&self, arguments: Vec<u8>, register: &mut Register) {
+    // @todo return number of cycles used (including out of bounds)
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
         match self.opcode {
             0x69 => self.call_immidiate(arguments, register),
+            0x65 => self.call_zero_page(arguments, register, &message_bus),
+            0x75 => self.call_zero_page_x(arguments, register, &message_bus),
+            0x6D => self.call_absolute(arguments, register, &message_bus),
+            0x7D => self.call_absolute_x(arguments, register, &message_bus),
+            0x79 => self.call_absolute_y(arguments, register, &message_bus),
             _ => panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
         }
     }
 
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) {
-        let carry_bit_value = if register.carry_bit() { 1 } else { 0 };
-        register.set_accumulator(register.a() + arguments[0] + carry_bit_value);
-        register.set_carry_bit(false);
+        add(arguments[0], register);
+    }
+
+    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+        let memory_value = message_bus.send_message(MessageBusTarget::Memory, MessageBusMessage::Read, arguments[0] as u16);
+        add(memory_value, register);
+    }
+
+    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+        let memory_address = arguments[0].overflowing_add(register.x()).0 as u16;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        );
+        add(memory_value, register);
+    }
+
+    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+        let memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        );
+        add(memory_value, register);
+    }
+
+    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+        let memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
+        let memory_address: u16 = memory_address.overflowing_add(register.x() as u16).0;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        );
+        add(memory_value, register);
+    }
+
+    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+        let memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
+        let memory_address: u16 = memory_address.overflowing_add(register.y() as u16).0;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        );
+        add(memory_value, register);
     }
 }
 
@@ -70,29 +117,183 @@ mod tests {
     use super::Adc;
     use crate::cpu::mnemonics::Mnemonic;
     use crate::cpu::register::Register;
+    use crate::memory::Memory;
+    use crate::message_bus::MessageBus;
 
     #[test]
-    fn test_immidiate_without_carry() {
+    fn test_immidiate() {
         let adc = Adc::new(0x69);
         let arguments = vec![0x42];
+        let mut memory = Memory::new();
         let mut register = Register::new();
         register.set_accumulator(0x02);
+        register.set_carry_bit(true);
 
-        adc.call(arguments, &mut register);
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x45);
+        assert_eq!(register.p(), 0b00110000);
+    }
+
+    #[test]
+    fn test_zero_page() {
+        let adc = Adc::new(0x65);
+        let arguments = vec![0x30];
+        let mut memory = Memory::new();
+        memory.write_byte(0x30, 0x42);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x02);
+        register.set_carry_bit(true);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x45);
+        assert_eq!(register.p(), 0b00110000);
+    }
+
+    #[test]
+    fn test_zero_page_x() {
+        let adc = Adc::new(0x75);
+        let arguments = vec![0x30];
+        let mut memory = Memory::new();
+        memory.write_byte(0x35, 0x42);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x02);
+        register.set_carry_bit(true);
+        register.set_x(0x05);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x45);
+        assert_eq!(register.p(), 0b00110000);
+    }
+
+    #[test]
+    fn test_zero_page_x_out_of_bounds() {
+        let adc = Adc::new(0x75);
+        let arguments = vec![0xff];
+        let mut memory = Memory::new();
+        memory.write_byte(0x35, 0x42);
+        memory.write_byte(0x135, 0x27);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x02);
+        register.set_x(0x36);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x44);
         assert_eq!(register.p(), 0b00110000);
     }
 
     #[test]
-    fn test_immidiate_with_carry() {
-        let adc = Adc::new(0x69);
-        let arguments = vec![0x42];
+    fn test_absolute() {
+        let adc = Adc::new(0x6D);
+        let arguments = vec![0x3c, 0x5a];
+        let mut memory = Memory::new();
+        memory.write_byte(0x5a3c, 0x42);
+
         let mut register = Register::new();
         register.set_accumulator(0x02);
         register.set_carry_bit(true);
 
-        adc.call(arguments, &mut register);
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x45);
+        assert_eq!(register.p(), 0b00110000);
+    }
+
+    #[test]
+    fn test_absolute_x() {
+        let adc = Adc::new(0x7D);
+        let arguments = vec![0x3c, 0x5a];
+        let mut memory = Memory::new();
+        memory.write_byte(0x5a4c, 0x42);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x02);
+        register.set_carry_bit(true);
+        register.set_x(0x10);
+        register.set_y(0x20);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x45);
+        assert_eq!(register.p(), 0b00110000);
+    }
+
+    #[test]
+    fn test_absolute_x_out_of_bounds() {
+        let adc = Adc::new(0x7D);
+        let arguments = vec![0xff, 0xff];
+        let mut memory = Memory::new();
+        memory.write_byte(0x5a, 0x42);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x02);
+        register.set_carry_bit(true);
+        register.set_x(0x5b);
+        register.set_y(0x20);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x45);
+        assert_eq!(register.p(), 0b00110000);
+    }
+
+    #[test]
+    fn test_absolute_y() {
+        let adc = Adc::new(0x79);
+        let arguments = vec![0x3c, 0x5a];
+        let mut memory = Memory::new();
+        memory.write_byte(0x5a4c, 0x42);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x02);
+        register.set_carry_bit(true);
+        register.set_x(0x20);
+        register.set_y(0x10);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x45);
+        assert_eq!(register.p(), 0b00110000);
+    }
+
+    #[test]
+    fn test_absolute_y_out_of_bounds() {
+        let adc = Adc::new(0x79);
+        let arguments = vec![0xff, 0xff];
+        let mut memory = Memory::new();
+        memory.write_byte(0x5a, 0x42);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x02);
+        register.set_carry_bit(true);
+        register.set_x(0x20);
+        register.set_y(0x5b);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);

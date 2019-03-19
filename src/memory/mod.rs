@@ -1,3 +1,6 @@
+use crate::message_bus::ProcessMessage;
+use crate::message_bus::MessageBusMessage;
+
 #[derive(Debug)]
 pub struct Memory {
     contents: Vec<u8>
@@ -8,12 +11,18 @@ impl Memory {
         return Memory { contents: vec![0; 65536] }
     }
 
-    pub fn read_byte(&self, address: usize) -> u8 {
-        return self.contents[address];
+    pub fn read_byte(&self, address: u16) -> u8 {
+        return self.contents[address as usize];
     }
 
-    pub fn write_byte(&mut self, address: usize, value: u8) {
-        self.contents[address] = value;
+    pub fn write_byte(&mut self, address: u16, value: u8) {
+        self.contents[address as usize] = value;
+    }
+}
+
+impl ProcessMessage for Memory {
+    fn process_message(&self, message: MessageBusMessage, argument: u16) -> u8 {
+        return self.read_byte(argument);
     }
 }
 

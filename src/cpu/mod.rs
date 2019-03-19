@@ -4,17 +4,20 @@ mod alu;
 
 use mnemonics::Mnemonics;
 use register::Register;
+use crate::message_bus::MessageBus;
 
 #[derive(Debug)]
-pub struct Cpu {
+pub struct Cpu<'a> {
+    message_bus: &'a MessageBus<'a>,
     current_instruction: Vec<u8>,
     register: register::Register,
     mnemonics: Mnemonics
 }
 
-impl Cpu {
-    pub fn new() -> Cpu {
+impl<'a> Cpu<'a> {
+    pub fn new(message_bus: &'a MessageBus<'a>) -> Cpu<'a> {
         return Cpu {
+            message_bus: message_bus,
             current_instruction: Vec::new(),
             register: Register::new(),
             mnemonics: Mnemonics::new()
@@ -38,7 +41,7 @@ impl Cpu {
         let mnemonic = self.mnemonics.resolve_mnemonic_from_opcode(self.current_instruction[0]);
         let parameters = &self.current_instruction[1..];
 
-        mnemonic.call(parameters.to_vec(), &mut self.register);
+        mnemonic.call(parameters.to_vec(), &mut self.register, self.message_bus);
     }
 
 

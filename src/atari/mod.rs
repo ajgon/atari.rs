@@ -1,24 +1,31 @@
 use super::cpu::Cpu;
 use super::memory::Memory;
+use super::message_bus::MessageBus;
 
 #[derive(Debug)]
-pub struct Atari {
-    cpu: Cpu,
-    memory: Memory
+pub struct Atari<'a> {
+    cpu: &'a mut Cpu<'a>
 }
 
-impl Atari {
-    pub fn new() -> Atari {
-        return Atari { cpu: Cpu::new(), memory: Memory::new() }
+impl<'a> Atari<'a> {
+    pub fn new(cpu: &'a mut Cpu<'a>) -> Atari<'a> {
+        return Atari {
+            cpu: cpu
+        };
     }
-    pub fn load_into_memory(&mut self, data: &str) {
-        for (i, byte) in data.bytes().enumerate() {
-            self.memory.write_byte(i, byte);
-        }
 
-        self.cpu.process_byte(0x69);
+    pub fn testme(&mut self) {
+        self.cpu.process_byte(0x65);
         self.cpu.process_byte(0x2A);
-        self.cpu.process_byte(0x69);
-        self.cpu.process_byte(0x45);
     }
+    //pub fn load_into_memory(&mut self, data: &str) {
+        //for (i, byte) in data.bytes().enumerate() {
+            //self.memory.write_byte(i, byte);
+        //}
+
+        //self.cpu.process_byte(0x69);
+        //self.cpu.process_byte(0x2A);
+        //self.cpu.process_byte(0x69);
+        //self.cpu.process_byte(0x45);
+    //}
 }

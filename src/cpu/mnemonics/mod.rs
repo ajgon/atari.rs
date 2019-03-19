@@ -1,11 +1,17 @@
 mod adc;
 use adc::Adc;
 use crate::cpu::register::Register;
+use crate::message_bus::MessageBus;
 
 pub trait Mnemonic {
     fn determine_bytes_and_cycles(&self) -> (usize, u8);
-    fn call(&self, arguments: Vec<u8>, register: &mut Register);
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register);
+    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
+    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
+    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
+    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
+    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
 }
 
 #[derive(Debug)]
@@ -19,7 +25,7 @@ impl Mnemonics {
 
     pub fn resolve_mnemonic_from_opcode(&self, opcode: u8) -> Box<Mnemonic> {
         return match opcode {
-            0x69 => Box::new(Adc::new(opcode)),
+            0x69 | 0x65 | 0x75 | 0x6d | 0x7d | 0x79 | 0x61 | 0x71 => Box::new(Adc::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
