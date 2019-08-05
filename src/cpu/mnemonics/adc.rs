@@ -20,12 +20,13 @@ ADC  Add Memory to Accumulator with Carry
 
 */
 
+use crate::cpu::addressing;
 use crate::cpu::mnemonics::Mnemonic;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 use crate::message_bus::MessageBusTarget;
 use crate::message_bus::MessageBusMessage;
-use crate::cpu::alu::add;
+use crate::cpu::alu;
 
 #[derive(Debug)]
 pub struct Adc {
@@ -71,79 +72,42 @@ impl Mnemonic for Adc {
     }
 
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) {
-        add(arguments[0], register);
+        alu::add(arguments[0], register);
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
-        let memory_value = message_bus.send_message(MessageBusTarget::Memory, MessageBusMessage::Read, arguments[0] as u16);
-        add(memory_value, register);
+        let (memory_value, boundary_crossed) = addressing::zero_page(arguments, message_bus);
+        alu::add(memory_value, register);
     }
 
     fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
-        let memory_address = arguments[0].overflowing_add(register.x()).0 as u16;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
-        );
-        add(memory_value, register);
+        let (memory_value, boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
+        alu::add(memory_value, register);
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
-        let memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
-        );
-        add(memory_value, register);
+        let (memory_value, boundary_crossed) = addressing::absolute(arguments, message_bus);
+        alu::add(memory_value, register);
     }
 
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
-        let memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
-        let memory_address: u16 = memory_address.overflowing_add(register.x() as u16).0;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
-        );
-        add(memory_value, register);
+        let (memory_value, boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
+        alu::add(memory_value, register);
     }
 
     fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
-        let memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
-        let memory_address: u16 = memory_address.overflowing_add(register.y() as u16).0;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
-        );
-        add(memory_value, register);
+        let (memory_value, boundary_crossed) = addressing::absolute_y(arguments, message_bus, register);
+        alu::add(memory_value, register);
     }
 
     fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
-        let memory_address: u16 = (arguments[0] as u16).overflowing_add(register.x() as u16).0;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
-        );
-        let new_memory_address: u16 = memory_value as u16;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address.overflowing_add(1).0
-        );
-        let new_memory_address: u16 = new_memory_address + ((memory_value as u16) << 8);
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, new_memory_address
-        );
-        add(memory_value, register);
+        let (memory_value, boundary_crossed) = addressing::indirect_x(arguments, message_bus, register);
+        alu::add(memory_value, register);
     }
 
     fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
-        let memory_address: u16 = arguments[0] as u16;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
-        );
-        let new_memory_address: u16 = memory_value as u16;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address.overflowing_add(1).0
-        );
-        let new_memory_address: u16 = new_memory_address + ((memory_value as u16) << 8);
-        let new_memory_address: u16 = new_memory_address.overflowing_add(register.y() as u16).0;
-        let memory_value = message_bus.send_message(
-            MessageBusTarget::Memory, MessageBusMessage::Read, new_memory_address
-        );
-        add(memory_value, register);
+        let (memory_value, boundary_crossed) = addressing::indirect_y(arguments, message_bus, register);
+        alu::add(memory_value, register);
     }
 }
 

@@ -1,5 +1,6 @@
 mod mnemonics;
 mod register;
+mod addressing;
 mod alu;
 
 use mnemonics::Mnemonics;
