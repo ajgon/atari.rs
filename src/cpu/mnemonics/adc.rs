@@ -64,6 +64,8 @@ impl Mnemonic for Adc {
             0x6D => self.call_absolute(arguments, register, &message_bus),
             0x7D => self.call_absolute_x(arguments, register, &message_bus),
             0x79 => self.call_absolute_y(arguments, register, &message_bus),
+            0x61 => self.call_indirect_x(arguments, register, &message_bus),
+            0x71 => self.call_indirect_y(arguments, register, &message_bus),
             _ => panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
         }
     }
@@ -107,6 +109,39 @@ impl Mnemonic for Adc {
         let memory_address: u16 = memory_address.overflowing_add(register.y() as u16).0;
         let memory_value = message_bus.send_message(
             MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        );
+        add(memory_value, register);
+    }
+
+    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+        let memory_address: u16 = (arguments[0] as u16).overflowing_add(register.x() as u16).0;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        );
+        let new_memory_address: u16 = memory_value as u16;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address.overflowing_add(1).0
+        );
+        let new_memory_address: u16 = new_memory_address + ((memory_value as u16) << 8);
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, new_memory_address
+        );
+        add(memory_value, register);
+    }
+
+    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+        let memory_address: u16 = arguments[0] as u16;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        );
+        let new_memory_address: u16 = memory_value as u16;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, memory_address.overflowing_add(1).0
+        );
+        let new_memory_address: u16 = new_memory_address + ((memory_value as u16) << 8);
+        let new_memory_address: u16 = new_memory_address.overflowing_add(register.y() as u16).0;
+        let memory_value = message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Read, new_memory_address
         );
         add(memory_value, register);
     }
@@ -298,6 +333,89 @@ mod tests {
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
     }
-}
 
+    #[test]
+    fn test_indirect_x() {
+        let adc = Adc::new(0x61);
+        let arguments = vec![0x44];
+        let mut memory = Memory::new();
+        memory.write_byte(0x77, 0x05);
+        memory.write_byte(0x78, 0x01);
+        memory.write_byte(0x0105, 0x07);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x11);
+        register.set_x(0x33);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x18);
+        assert_eq!(register.p(), 0x30);
+    }
+
+    #[test]
+    fn test_indirect_x_out_of_zeropage() {
+        let adc = Adc::new(0x61);
+        let arguments = vec![0xCC];
+        let mut memory = Memory::new();
+        memory.write_byte(0xff, 0x05);
+        memory.write_byte(0x100, 0x01);
+        memory.write_byte(0x0105, 0x07);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x11);
+        register.set_x(0x33);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x18);
+        assert_eq!(register.p(), 0x30);
+    }
+
+    #[test]
+    fn test_indirect_y() {
+        let adc = Adc::new(0x71);
+        let arguments = vec![0x77];
+        let mut memory = Memory::new();
+        memory.write_byte(0x77, 0x05);
+        memory.write_byte(0x78, 0x01);
+        memory.write_byte(0x0109, 0x07);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x11);
+        register.set_y(0x04);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x18);
+        assert_eq!(register.p(), 0x30);
+    }
+
+    #[test]
+    fn test_indirect_y_out_of_zeropage() {
+        let adc = Adc::new(0x71);
+        let arguments = vec![0xFF];
+        let mut memory = Memory::new();
+        memory.write_byte(0xFF, 0x05);
+        memory.write_byte(0x100, 0x01);
+        memory.write_byte(0x0109, 0x07);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x11);
+        register.set_y(0x04);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x18);
+        assert_eq!(register.p(), 0x30);
+    }
+}
 

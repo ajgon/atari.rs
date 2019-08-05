@@ -12,6 +12,8 @@ pub trait Mnemonic {
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
     fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
+    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
+    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
 }
 
 #[derive(Debug)]
