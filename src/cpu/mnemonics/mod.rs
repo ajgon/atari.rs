@@ -6,16 +6,16 @@ use crate::message_bus::MessageBusTarget;
 use crate::message_bus::MessageBusMessage;
 
 pub trait Mnemonic {
-    fn determine_bytes_and_cycles(&self) -> (usize, u8);
-    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
-    fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register);
-    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
-    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
-    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
-    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
-    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
-    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
-    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus);
+    fn determine_bytes(&self) -> usize;
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8;
+    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
 }
 
 #[derive(Debug)]

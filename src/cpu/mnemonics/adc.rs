@@ -41,73 +41,87 @@ impl Adc {
 }
 
 impl Mnemonic for Adc {
-    fn determine_bytes_and_cycles(&self) -> (usize, u8) {
-        // @todo implement cycles change when page boundary is crossed
+    fn determine_bytes(&self) -> usize {
         return match self.opcode {
-            0x69 => (2, 2),
-            0x65 => (2, 3),
-            0x75 => (2, 4),
-            0x6D => (3, 4),
-            0x7D => (3, 4),
-            0x79 => (3, 4),
-            0x61 => (2, 6),
-            0x71 => (2, 5),
+            0x69 => 2,
+            0x65 => 2,
+            0x75 => 2,
+            0x6D => 3,
+            0x7D => 3,
+            0x79 => 3,
+            0x61 => 2,
+            0x71 => 2,
             _ => panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
         }
     }
 
     // @todo return number of cycles used (including out of bounds)
-    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         match self.opcode {
-            0x69 => self.call_immidiate(arguments, register),
-            0x65 => self.call_zero_page(arguments, register, &message_bus),
-            0x75 => self.call_zero_page_x(arguments, register, &message_bus),
-            0x6D => self.call_absolute(arguments, register, &message_bus),
-            0x7D => self.call_absolute_x(arguments, register, &message_bus),
-            0x79 => self.call_absolute_y(arguments, register, &message_bus),
-            0x61 => self.call_indirect_x(arguments, register, &message_bus),
-            0x71 => self.call_indirect_y(arguments, register, &message_bus),
-            _ => panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
+            0x69 => return self.call_immidiate(arguments, register),
+            0x65 => return self.call_zero_page(arguments, register, &message_bus),
+            0x75 => return self.call_zero_page_x(arguments, register, &message_bus),
+            0x6D => return self.call_absolute(arguments, register, &message_bus),
+            0x7D => return self.call_absolute_x(arguments, register, &message_bus),
+            0x79 => return self.call_absolute_y(arguments, register, &message_bus),
+            0x61 => return self.call_indirect_x(arguments, register, &message_bus),
+            0x71 => return self.call_indirect_y(arguments, register, &message_bus),
+            _ => return panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
         }
     }
 
-    fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) {
+    fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8 {
         alu::add(arguments[0], register);
+        return 2;
     }
 
-    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::zero_page(arguments, message_bus);
+
         alu::add(memory_value, register);
+        return 3;
     }
 
-    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
+
         alu::add(memory_value, register);
+        return 4;
     }
 
-    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::absolute(arguments, message_bus);
+
         alu::add(memory_value, register);
+        return 4;
     }
 
-    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
+
         alu::add(memory_value, register);
+        return (if boundary_crossed { 5u8 } else { 4u8 })
     }
 
-    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::absolute_y(arguments, message_bus, register);
+
         alu::add(memory_value, register);
+        return (if boundary_crossed { 5u8 } else { 4u8 })
     }
 
-    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::indirect_x(arguments, message_bus, register);
+
         alu::add(memory_value, register);
+        return 6;
     }
 
-    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) {
+    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::indirect_y(arguments, message_bus, register);
+
         alu::add(memory_value, register);
+        return (if boundary_crossed { 6u8 } else { 5u8 })
     }
 }
 
@@ -130,10 +144,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 2);
     }
 
     #[test]
@@ -149,10 +164,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 3);
     }
 
     #[test]
@@ -169,10 +185,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 4);
     }
 
     #[test]
@@ -189,10 +206,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x44);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 4);
     }
 
     #[test]
@@ -208,10 +226,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 4);
     }
 
     #[test]
@@ -229,10 +248,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 4);
     }
 
     #[test]
@@ -250,10 +270,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 5);
     }
 
     #[test]
@@ -271,10 +292,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 4);
     }
 
     #[test]
@@ -292,10 +314,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x45);
         assert_eq!(register.p(), 0b00110000);
+        assert_eq!(cycles, 5);
     }
 
     #[test]
@@ -313,10 +336,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x18);
         assert_eq!(register.p(), 0x30);
+        assert_eq!(cycles, 6);
     }
 
     #[test]
@@ -334,10 +358,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x18);
         assert_eq!(register.p(), 0x30);
+        assert_eq!(cycles, 6);
     }
 
     #[test]
@@ -355,10 +380,33 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x18);
         assert_eq!(register.p(), 0x30);
+        assert_eq!(cycles, 5);
+    }
+
+    #[test]
+    fn test_indirect_y_out_of_bonds() {
+        let adc = Adc::new(0x71);
+        let arguments = vec![0x77];
+        let mut memory = Memory::new();
+        memory.write_byte(0x77, 0xff);
+        memory.write_byte(0x78, 0x01);
+        memory.write_byte(0x0205, 0x07);
+
+        let mut register = Register::new();
+        register.set_accumulator(0x11);
+        register.set_y(0x06);
+
+        let mut message_bus = MessageBus::new(&memory);
+
+        let cycles = adc.call(arguments, &mut register, &message_bus);
+
+        assert_eq!(register.a(), 0x18);
+        assert_eq!(register.p(), 0x30);
+        assert_eq!(cycles, 6);
     }
 
     #[test]
@@ -376,10 +424,11 @@ mod tests {
 
         let mut message_bus = MessageBus::new(&memory);
 
-        adc.call(arguments, &mut register, &message_bus);
+        let cycles = adc.call(arguments, &mut register, &message_bus);
 
         assert_eq!(register.a(), 0x18);
         assert_eq!(register.p(), 0x30);
+        assert_eq!(cycles, 5);
     }
 }
 
