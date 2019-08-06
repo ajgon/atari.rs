@@ -99,6 +99,22 @@ pub fn indirect_y(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &R
     return (memory_value, boundary_crossed);
 }
 
+pub fn stack_push(value: u8, message_bus: &mut MessageBus, register: &mut Register) {
+    let stack_address:u16 = register.s() as u16 + 0x100;
+    message_bus.send_message(
+        MessageBusTarget::Memory, MessageBusMessage::Write, vec![stack_address, value as u16]
+    );
+    register.push_s();
+}
+
+pub fn stack_pull(message_bus: &mut MessageBus, register: &mut Register) -> u8 {
+    register.pull_s();
+    let stack_address:u16 = register.s() as u16 + 0x100;
+    return message_bus.send_message(
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![stack_address]
+    );
+}
+
 #[cfg(test)]
 mod tests {
     use super::zero_page;
@@ -109,6 +125,8 @@ mod tests {
     use super::absolute_y;
     use super::indirect_x;
     use super::indirect_y;
+    use super::stack_push;
+    use super::stack_pull;
 
     use crate::cpu::register::Register;
     use crate::memory::Memory;
@@ -390,6 +408,38 @@ mod tests {
         let value = indirect_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
+    }
+
+    #[test]
+    fn test_stack_push() {
+        let value = 0x23;
+        let mut memory = Memory::new();
+
+        let mut register = Register::new();
+
+        let mut message_bus = MessageBus::new(&mut memory);
+
+        stack_push(value, &mut message_bus, &mut register);
+
+        assert_eq!(memory.read_byte(0x1ff), value);
+        assert_eq!(register.s(), 0xfe);
+    }
+
+    #[test]
+    fn test_stack_pull() {
+        let mut memory = Memory::new();
+        memory.write_byte(0x1ff, 0x23);
+
+        let mut register = Register::new();
+        register.push_s();
+
+        let mut message_bus = MessageBus::new(&mut memory);
+
+        let value = stack_pull(&mut message_bus, &mut register);
+
+        assert_eq!(memory.read_byte(0x1ff), 0x23);
+        assert_eq!(value, 0x23);
+        assert_eq!(register.s(), 0xff);
     }
 }
 

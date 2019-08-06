@@ -36,6 +36,14 @@ impl Register {
         return self.s;
     }
 
+    pub fn push_s(&mut self) {
+        self.s -= 1;
+    }
+
+    pub fn pull_s(&mut self) {
+        self.s += 1;
+    }
+
     pub fn a(&self) -> u8 {
         return self.a;
     }
