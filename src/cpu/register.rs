@@ -60,6 +60,10 @@ impl Register {
         return self.p & 0b00000001 != 0;
     }
 
+    pub fn zero_bit(&self) -> bool {
+        return self.p & 0b00000010 != 0;
+    }
+
     pub fn decimal_bit(&self) -> bool {
         return self.p & 0b00001000 != 0;
     }

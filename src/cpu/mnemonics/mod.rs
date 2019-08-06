@@ -3,11 +3,13 @@ mod and;
 mod asl;
 mod bcc;
 mod bcs;
+mod beq;
 use adc::Adc;
 use and::And;
 use asl::Asl;
 use bcc::Bcc;
 use bcs::Bcs;
+use beq::Beq;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -43,6 +45,7 @@ impl Mnemonics {
             0x0A | 0x06 | 0x16 | 0x0E | 0x1E => Box::new(Asl::new(opcode)),
             0x90 => Box::new(Bcc::new(opcode)),
             0xB0 => Box::new(Bcs::new(opcode)),
+            0xF0 => Box::new(Beq::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
