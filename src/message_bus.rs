@@ -5,8 +5,8 @@ pub enum MessageBusTarget {
 }
 
 pub enum MessageBusMessage {
-    Read,
-    Write
+    Read
+    //Write
 }
 
 pub trait ProcessMessage {
@@ -23,10 +23,6 @@ impl<'a> MessageBus<'a> {
         return MessageBus {
             memory: memory
         };
-    }
-
-    pub fn testme(&self) {
-        println!("I am message bus and I work!");
     }
 
     pub fn send_message(&self, target: MessageBusTarget, message: MessageBusMessage, argument: u16) -> u8 {

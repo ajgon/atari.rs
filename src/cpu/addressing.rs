@@ -110,7 +110,6 @@ mod tests {
     use super::indirect_x;
     use super::indirect_y;
 
-    use crate::cpu::mnemonics::Mnemonic;
     use crate::cpu::register::Register;
     use crate::memory::Memory;
     use crate::message_bus::MessageBus;
@@ -121,7 +120,7 @@ mod tests {
         let mut memory = Memory::new();
         memory.write_byte(0x30, 0x42);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = zero_page(arguments, &message_bus);
 
@@ -137,7 +136,7 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x05);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = zero_page_x(arguments, &message_bus, &register);
 
@@ -154,7 +153,7 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x36);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = zero_page_x(arguments, &message_bus, &register);
 
@@ -170,7 +169,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x05);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = zero_page_y(arguments, &message_bus, &register);
 
@@ -187,7 +186,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x36);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = zero_page_y(arguments, &message_bus, &register);
 
@@ -200,7 +199,7 @@ mod tests {
         let mut memory = Memory::new();
         memory.write_byte(0x5a3c, 0x42);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = absolute(arguments, &message_bus);
 
@@ -216,7 +215,7 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x10);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = absolute_x(arguments, &message_bus, &register);
 
@@ -232,7 +231,7 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x10);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = absolute_x(arguments, &message_bus, &register);
 
@@ -248,7 +247,7 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x5b);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = absolute_x(arguments, &message_bus, &register);
 
@@ -264,7 +263,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x10);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = absolute_y(arguments, &message_bus, &register);
 
@@ -280,7 +279,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x10);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = absolute_y(arguments, &message_bus, &register);
 
@@ -296,7 +295,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x5b);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = absolute_y(arguments, &message_bus, &register);
 
@@ -314,7 +313,7 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x33);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = indirect_x(arguments, &message_bus, &register);
 
@@ -332,7 +331,7 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x33);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = indirect_x(arguments, &message_bus, &register);
 
@@ -350,7 +349,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x04);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = indirect_y(arguments, &message_bus, &register);
 
@@ -368,7 +367,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x06);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = indirect_y(arguments, &message_bus, &register);
 
@@ -386,7 +385,7 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x04);
 
-        let mut message_bus = MessageBus::new(&memory);
+        let message_bus = MessageBus::new(&memory);
 
         let value = indirect_y(arguments, &message_bus, &register);
 

@@ -1,6 +1,5 @@
 use super::cpu::Cpu;
-use super::memory::Memory;
-use super::message_bus::MessageBus;
+//use super::memory::Memory;
 
 #[derive(Debug)]
 pub struct Atari<'a> {

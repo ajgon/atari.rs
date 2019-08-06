@@ -21,7 +21,7 @@ impl Memory {
 }
 
 impl ProcessMessage for Memory {
-    fn process_message(&self, message: MessageBusMessage, argument: u16) -> u8 {
+    fn process_message(&self, _message: MessageBusMessage, argument: u16) -> u8 {
         return self.read_byte(argument);
     }
 }
