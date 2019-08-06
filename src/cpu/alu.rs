@@ -16,6 +16,14 @@ pub fn add(operand: u8, register: &mut Register) {
     register.set_negative_bit(result > 127);
 }
 
+pub fn and(operand: u8, register: &mut Register) {
+    let result = operand & register.a();
+
+    register.set_accumulator(result);
+    register.set_zero_bit(result == 0);
+    register.set_negative_bit(result > 127);
+}
+
 pub fn sub(operand: u8, register: &mut Register) {
     let (result, carry_bit) = calculate_subtraction_result_in_proper_math_mode(operand, register);
 
@@ -155,6 +163,7 @@ fn bcd_overflow(a: u8, b: u8, initial_carry: bool) -> bool {
 #[cfg(test)]
 mod tests {
     use super::add;
+    use super::and;
     use super::sub;
 
     use crate::cpu::register::Register;
@@ -365,6 +374,36 @@ mod tests {
 
         assert_eq!(register.a(), 0b0101_0100); // invalid result in BCD
         assert_eq!(register.p(), 0b0011_1000);
+    }
+
+    #[test]
+    fn test_binary_and() {
+        let mut register = Register::new();
+        register.set_accumulator(0b0110_0111);
+        and(0b1010_1010, &mut register);
+
+        assert_eq!(register.a(), 0b0010_0010);
+        assert_eq!(register.p(), 0b0011_0000);
+    }
+
+    #[test]
+    fn test_binary_and_with_zero() {
+        let mut register = Register::new();
+        register.set_accumulator(0b1111_0000);
+        and(0b0000_1111, &mut register);
+
+        assert_eq!(register.a(), 0b0000_0000);
+        assert_eq!(register.p(), 0b0011_0010);
+    }
+
+    #[test]
+    fn test_binary_and_with_negative_result() {
+        let mut register = Register::new();
+        register.set_accumulator(0b1001_0101);
+        and(0b1010_1010, &mut register);
+
+        assert_eq!(register.a(), 0b1000_0000);
+        assert_eq!(register.p(), 0b1011_0000);
     }
 
     #[test]

@@ -1,5 +1,7 @@
 mod adc;
+mod and;
 use adc::Adc;
+use and::And;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -28,6 +30,7 @@ impl Mnemonics {
     pub fn resolve_mnemonic_from_opcode(&self, opcode: u8) -> Box<Mnemonic> {
         return match opcode {
             0x69 | 0x65 | 0x75 | 0x6d | 0x7d | 0x79 | 0x61 | 0x71 => Box::new(Adc::new(opcode)),
+            0x29 | 0x25 | 0x35 | 0x2d | 0x3d | 0x39 | 0x21 | 0x31 => Box::new(And::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
