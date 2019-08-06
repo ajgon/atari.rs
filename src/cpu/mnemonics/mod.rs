@@ -27,7 +27,7 @@ use crate::message_bus::MessageBus;
 pub trait Mnemonic {
     fn determine_bytes(&self) -> usize;
     fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8;
-    fn call_implied(&self, register: &mut Register) -> u8 { 0 }
+    fn call_implied(&self, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_accumulator(&self, register: &mut Register) -> u8 { 0 }
     fn call_relative(&self, arguments: Vec<u8>, register: &mut Register) -> u8 { 0 }
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8 { 0 }

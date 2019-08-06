@@ -32,6 +32,10 @@ impl Register {
         self.pc += amount;
     }
 
+    pub fn set_pc(&mut self, value: u16) {
+        self.pc = value;
+    }
+
     pub fn s(&self) -> u8 {
         return self.s;
     }
@@ -101,6 +105,22 @@ impl Register {
             self.p |= 0b00001000;
         } else {
             self.p &= 0b11110111;
+        }
+    }
+
+    pub fn set_break_bit(&mut self, value: bool) {
+        if value {
+            self.p |= 0b00010000;
+        } else {
+            self.p &= 0b11101111;
+        }
+    }
+
+    pub fn set_interrupt_bit(&mut self, value: bool) {
+        if value {
+            self.p |= 0b00000100;
+        } else {
+            self.p &= 0b11111011;
         }
     }
 
