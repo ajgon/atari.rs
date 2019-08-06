@@ -5,29 +5,29 @@ pub enum MessageBusTarget {
 }
 
 pub enum MessageBusMessage {
-    Read
-    //Write
+    Read,
+    Write
 }
 
 pub trait ProcessMessage {
-    fn process_message(&self, message: MessageBusMessage, argument: u16) -> u8;
+    fn process_message(&mut self, message: MessageBusMessage, arguments: Vec<u16>) -> u8;
 }
 
 #[derive(Debug)]
 pub struct MessageBus<'a> {
-    memory: &'a Memory
+    memory: &'a mut Memory
 }
 
 impl<'a> MessageBus<'a> {
-    pub fn new(memory: &Memory) -> MessageBus {
+    pub fn new(memory: &mut Memory) -> MessageBus {
         return MessageBus {
             memory: memory
         };
     }
 
-    pub fn send_message(&self, target: MessageBusTarget, message: MessageBusMessage, argument: u16) -> u8 {
+    pub fn send_message(&mut self, target: MessageBusTarget, message: MessageBusMessage, arguments: Vec<u16>) -> u8 {
         return match target {
-            MessageBusTarget::Memory => self.memory.process_message(message, argument)
+            MessageBusTarget::Memory => self.memory.process_message(message, arguments)
         };
     }
 }

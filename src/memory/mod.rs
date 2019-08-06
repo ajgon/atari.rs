@@ -15,14 +15,18 @@ impl Memory {
         return self.contents[address as usize];
     }
 
-    pub fn write_byte(&mut self, address: u16, value: u8) {
+    pub fn write_byte(&mut self, address: u16, value: u8) -> u8 {
         self.contents[address as usize] = value;
+        return value;
     }
 }
 
 impl ProcessMessage for Memory {
-    fn process_message(&self, _message: MessageBusMessage, argument: u16) -> u8 {
-        return self.read_byte(argument);
+    fn process_message(&mut self, message: MessageBusMessage, arguments: Vec<u16>) -> u8 {
+        return match message {
+            MessageBusMessage::Read => self.read_byte(arguments[0]),
+            MessageBusMessage::Write => self.write_byte(arguments[0], (arguments[1] & 0xFF) as u8)
+        }
     }
 }
 

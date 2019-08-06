@@ -43,13 +43,13 @@ impl Mnemonic for Asl {
         }
     }
 
-    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         match self.opcode {
             0x0A => return self.call_accumulator(register),
-            0x06 => return self.call_zero_page(arguments, register, &message_bus),
-            0x16 => return self.call_zero_page_x(arguments, register, &message_bus),
-            0x0E => return self.call_absolute(arguments, register, &message_bus),
-            0x1E => return self.call_absolute_x(arguments, register, &message_bus),
+            0x06 => return self.call_zero_page(arguments, register, message_bus),
+            0x16 => return self.call_zero_page_x(arguments, register, message_bus),
+            0x0E => return self.call_absolute(arguments, register, message_bus),
+            0x1E => return self.call_absolute_x(arguments, register, message_bus),
             _ => panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
         }
     }
@@ -59,28 +59,28 @@ impl Mnemonic for Asl {
         return 2;
     }
 
-    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
 
         alu::shift_left(memory_value, register);
         return 5;
     }
 
-    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
 
         alu::shift_left(memory_value, register);
         return 6;
     }
 
-    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
 
         alu::shift_left(memory_value, register);
         return 6;
     }
 
-    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
 
         alu::shift_left(memory_value, register);
@@ -99,13 +99,13 @@ mod tests {
     #[test]
     fn test_accumulator() {
         let asl = Asl::new(0x0A);
-        let memory = Memory::new();
+        let mut memory = Memory::new();
         let mut register = Register::new();
         register.set_accumulator(0b0010_1100);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = asl.call(vec![register.a()], &mut register, &message_bus);
+        let cycles = asl.call(vec![register.a()], &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1000);
         assert_eq!(register.p(), 0b0011_0000);
@@ -121,9 +121,9 @@ mod tests {
 
         let mut register = Register::new();
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = asl.call(arguments, &mut register, &message_bus);
+        let cycles = asl.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1000);
         assert_eq!(register.p(), 0b0011_0000);
@@ -140,9 +140,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x05);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = asl.call(arguments, &mut register, &message_bus);
+        let cycles = asl.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1000);
         assert_eq!(register.p(), 0b0011_0000);
@@ -158,9 +158,9 @@ mod tests {
 
         let mut register = Register::new();
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = asl.call(arguments, &mut register, &message_bus);
+        let cycles = asl.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1000);
         assert_eq!(register.p(), 0b0011_0000);
@@ -178,9 +178,9 @@ mod tests {
         register.set_x(0x10);
         register.set_y(0x20);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = asl.call(arguments, &mut register, &message_bus);
+        let cycles = asl.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1000);
         assert_eq!(register.p(), 0b0011_0000);
@@ -192,11 +192,11 @@ mod tests {
     fn test_invalid_opcode() {
         let asl = Asl::new(0x00);
         let arguments = vec![0xFF];
-        let memory = Memory::new();
-        let message_bus = MessageBus::new(&memory);
+        let mut memory = Memory::new();
+        let mut message_bus = MessageBus::new(&mut memory);
         let mut register = Register::new();
 
-        asl.call(arguments, &mut register, &message_bus);
+        asl.call(arguments, &mut register, &mut message_bus);
     }
 }
 

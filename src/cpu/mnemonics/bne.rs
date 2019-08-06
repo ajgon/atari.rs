@@ -33,7 +33,7 @@ impl Mnemonic for Bne {
         }
     }
 
-    fn call(&self, arguments: Vec<u8>, register: &mut Register, _message_bus: &MessageBus) -> u8 {
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, _message_bus: &mut MessageBus) -> u8 {
         match self.opcode {
             0xD0 => return self.call_relative(arguments, register),
             _ => panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
@@ -64,12 +64,12 @@ mod tests {
     fn test_relative() {
         let bne = Bne::new(0xD0);
         let arguments = vec![0x02];
-        let memory = Memory::new();
+        let mut memory = Memory::new();
         let mut register = Register::new();
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = bne.call(arguments, &mut register, &message_bus);
+        let cycles = bne.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(0x0602, register.pc());
         assert_eq!(cycles, 3);
@@ -79,13 +79,13 @@ mod tests {
     fn test_relative_out_of_bonds() {
         let bne = Bne::new(0xD0);
         let arguments = vec![0x85];
-        let memory = Memory::new();
+        let mut memory = Memory::new();
         let mut register = Register::new();
         register.increment_pc_by(0x80);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = bne.call(arguments, &mut register, &message_bus);
+        let cycles = bne.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(0x0705, register.pc());
         assert_eq!(cycles, 4);
@@ -95,13 +95,13 @@ mod tests {
     fn test_relative_with_zero_bit_set() {
         let bne = Bne::new(0xD0);
         let arguments = vec![0x02];
-        let memory = Memory::new();
+        let mut memory = Memory::new();
         let mut register = Register::new();
         register.set_zero_bit(true);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = bne.call(arguments, &mut register, &message_bus);
+        let cycles = bne.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(0x0600, register.pc());
         assert_eq!(cycles, 2);
@@ -112,11 +112,11 @@ mod tests {
     fn test_invalid_opcode() {
         let bne = Bne::new(0x00);
         let arguments = vec![0xFF];
-        let memory = Memory::new();
-        let message_bus = MessageBus::new(&memory);
+        let mut memory = Memory::new();
+        let mut message_bus = MessageBus::new(&mut memory);
         let mut register = Register::new();
 
-        bne.call(arguments, &mut register, &message_bus);
+        bne.call(arguments, &mut register, &mut message_bus);
     }
 }
 

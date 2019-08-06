@@ -53,16 +53,16 @@ impl Mnemonic for And {
         }
     }
 
-    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         match self.opcode {
             0x29 => return self.call_immidiate(arguments, register),
-            0x25 => return self.call_zero_page(arguments, register, &message_bus),
-            0x35 => return self.call_zero_page_x(arguments, register, &message_bus),
-            0x2D => return self.call_absolute(arguments, register, &message_bus),
-            0x3D => return self.call_absolute_x(arguments, register, &message_bus),
-            0x39 => return self.call_absolute_y(arguments, register, &message_bus),
-            0x21 => return self.call_indirect_x(arguments, register, &message_bus),
-            0x31 => return self.call_indirect_y(arguments, register, &message_bus),
+            0x25 => return self.call_zero_page(arguments, register, message_bus),
+            0x35 => return self.call_zero_page_x(arguments, register, message_bus),
+            0x2D => return self.call_absolute(arguments, register, message_bus),
+            0x3D => return self.call_absolute_x(arguments, register, message_bus),
+            0x39 => return self.call_absolute_y(arguments, register, message_bus),
+            0x21 => return self.call_indirect_x(arguments, register, message_bus),
+            0x31 => return self.call_indirect_y(arguments, register, message_bus),
             _ => panic!("Invalid opcode `0x{:x}` for mnemonic {}", self.opcode, self.mnemonic)
         }
     }
@@ -72,49 +72,49 @@ impl Mnemonic for And {
         return 2;
     }
 
-    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
 
         alu::and(memory_value, register);
         return 3;
     }
 
-    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
 
         alu::and(memory_value, register);
         return 4;
     }
 
-    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
 
         alu::and(memory_value, register);
         return 4;
     }
 
-    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
 
         alu::and(memory_value, register);
         return if boundary_crossed { 5u8 } else { 4u8 };
     }
 
-    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::absolute_y(arguments, message_bus, register);
 
         alu::and(memory_value, register);
         return if boundary_crossed { 5u8 } else { 4u8 };
     }
 
-    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::indirect_x(arguments, message_bus, register);
 
         alu::and(memory_value, register);
         return 6;
     }
 
-    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
+    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::indirect_y(arguments, message_bus, register);
 
         alu::and(memory_value, register);
@@ -134,13 +134,13 @@ mod tests {
     fn test_immidiate() {
         let and = And::new(0x29);
         let arguments = vec![0b1010_0101];
-        let memory = Memory::new();
+        let mut memory = Memory::new();
         let mut register = Register::new();
         register.set_accumulator(0b0101_0101);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -157,9 +157,9 @@ mod tests {
         let mut register = Register::new();
         register.set_accumulator(0b0101_0101);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -177,9 +177,9 @@ mod tests {
         register.set_accumulator(0b0101_0101);
         register.set_x(0x05);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -196,9 +196,9 @@ mod tests {
         let mut register = Register::new();
         register.set_accumulator(0b0101_0101);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -217,9 +217,9 @@ mod tests {
         register.set_x(0x10);
         register.set_y(0x20);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -238,9 +238,9 @@ mod tests {
         register.set_x(0x5b);
         register.set_y(0x20);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -259,9 +259,9 @@ mod tests {
         register.set_x(0x20);
         register.set_y(0x10);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -280,9 +280,9 @@ mod tests {
         register.set_x(0x20);
         register.set_y(0x5b);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -302,9 +302,9 @@ mod tests {
         register.set_accumulator(0b0101_0101);
         register.set_x(0x33);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -324,9 +324,9 @@ mod tests {
         register.set_accumulator(0b0101_0101);
         register.set_y(0x04);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -346,9 +346,9 @@ mod tests {
         register.set_accumulator(0b0101_0101);
         register.set_y(0x06);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let cycles = and.call(arguments, &mut register, &message_bus);
+        let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
         assert_eq!(register.p(), 0b0011_0000);
@@ -360,10 +360,10 @@ mod tests {
     fn test_invalid_opcode() {
         let and = And::new(0x00);
         let arguments = vec![0xFF];
-        let memory = Memory::new();
-        let message_bus = MessageBus::new(&memory);
+        let mut memory = Memory::new();
+        let mut message_bus = MessageBus::new(&mut memory);
         let mut register = Register::new();
 
-        and.call(arguments, &mut register, &message_bus);
+        and.call(arguments, &mut register, &mut message_bus);
     }
 }

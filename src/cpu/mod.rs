@@ -9,14 +9,14 @@ use crate::message_bus::MessageBus;
 
 #[derive(Debug)]
 pub struct Cpu<'a> {
-    message_bus: &'a MessageBus<'a>,
+    message_bus: &'a mut MessageBus<'a>,
     current_instruction: Vec<u8>,
     register: register::Register,
     mnemonics: Mnemonics
 }
 
 impl<'a> Cpu<'a> {
-    pub fn new(message_bus: &'a MessageBus<'a>) -> Cpu<'a> {
+    pub fn new(message_bus: &'a mut MessageBus<'a>) -> Cpu<'a> {
         return Cpu {
             message_bus: message_bus,
             current_instruction: Vec::new(),
@@ -42,8 +42,6 @@ impl<'a> Cpu<'a> {
         let mnemonic = self.mnemonics.resolve_mnemonic_from_opcode(self.current_instruction[0]);
         let parameters = &self.current_instruction[1..];
 
-        mnemonic.call(parameters.to_vec(), &mut self.register, self.message_bus);
+        mnemonic.call(parameters.to_vec(), &mut self.register, &mut self.message_bus);
     }
-
-
 }

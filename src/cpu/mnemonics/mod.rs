@@ -8,6 +8,7 @@ mod bit;
 mod bmi;
 mod bne;
 mod bpl;
+mod brk;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -18,23 +19,25 @@ use bit::Bit;
 use bmi::Bmi;
 use bne::Bne;
 use bpl::Bpl;
+use brk::Brk;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
 #[allow(unused_variables)]
 pub trait Mnemonic {
     fn determine_bytes(&self) -> usize;
-    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8;
+    fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8;
+    fn call_implied(&self, register: &mut Register) -> u8 { 0 }
     fn call_accumulator(&self, register: &mut Register) -> u8 { 0 }
     fn call_relative(&self, arguments: Vec<u8>, register: &mut Register) -> u8 { 0 }
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8 { 0 }
-    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 { 0 }
-    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 { 0 }
-    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 { 0 }
-    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 { 0 }
-    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 { 0 }
-    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 { 0 }
-    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 { 0 }
+    fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
 }
 
 #[derive(Debug)]
@@ -58,6 +61,7 @@ impl Mnemonics {
             0x30 => Box::new(Bmi::new(opcode)),
             0xD0 => Box::new(Bne::new(opcode)),
             0x10 => Box::new(Bpl::new(opcode)),
+            0x00 => Box::new(Brk::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }

@@ -5,9 +5,9 @@ mod atari;
 use atari::Atari;
 
 fn main() {
-    let memory = memory::Memory::new();
-    let message_bus = message_bus::MessageBus::new(&memory);
-    let mut cpu = cpu::Cpu::new(&message_bus);
+    let mut memory = memory::Memory::new();
+    let mut message_bus = message_bus::MessageBus::new(&mut memory);
+    let mut cpu = cpu::Cpu::new(&mut message_bus);
 
     let mut atari = Atari::new(&mut cpu);
     atari.testme();

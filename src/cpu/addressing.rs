@@ -3,96 +3,96 @@ use crate::message_bus::MessageBus;
 use crate::message_bus::MessageBusTarget;
 use crate::message_bus::MessageBusMessage;
 
-pub fn zero_page(arguments: Vec<u8>, message_bus: &MessageBus) -> (u8, bool) {
-    let memory_value = message_bus.send_message(MessageBusTarget::Memory, MessageBusMessage::Read, arguments[0] as u16);
+pub fn zero_page(arguments: Vec<u8>, message_bus: &mut MessageBus) -> (u8, bool) {
+    let memory_value = message_bus.send_message(MessageBusTarget::Memory, MessageBusMessage::Read, vec![arguments[0] as u16]);
     let boundary_crossed = false;
 
     return (memory_value, boundary_crossed);
 }
 
-pub fn zero_page_x(arguments: Vec<u8>, message_bus: &MessageBus, register: &Register) -> (u8, bool) {
+pub fn zero_page_x(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &Register) -> (u8, bool) {
     let memory_address = arguments[0].overflowing_add(register.x()).0 as u16;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );
     let boundary_crossed = false;
 
     return (memory_value, boundary_crossed);
 }
 
-pub fn zero_page_y(arguments: Vec<u8>, message_bus: &MessageBus, register: &Register) -> (u8, bool) {
+pub fn zero_page_y(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &Register) -> (u8, bool) {
     let memory_address = arguments[0].overflowing_add(register.y()).0 as u16;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );
     let boundary_crossed = false;
 
     return (memory_value, boundary_crossed);
 }
 
-pub fn absolute(arguments: Vec<u8>, message_bus: &MessageBus) -> (u8, bool) {
+pub fn absolute(arguments: Vec<u8>, message_bus: &mut MessageBus) -> (u8, bool) {
     let memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );
     let boundary_crossed = false;
 
     return (memory_value, boundary_crossed);
 }
 
-pub fn absolute_x(arguments: Vec<u8>, message_bus: &MessageBus, register: &Register) -> (u8, bool) {
+pub fn absolute_x(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &Register) -> (u8, bool) {
     let base_memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
     let memory_address: u16 = base_memory_address.overflowing_add(register.x() as u16).0;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );
     let boundary_crossed = base_memory_address & 0xff00 != memory_address & 0xff00;
 
     return (memory_value, boundary_crossed);
 }
 
-pub fn absolute_y(arguments: Vec<u8>, message_bus: &MessageBus, register: &Register) -> (u8, bool) {
+pub fn absolute_y(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &Register) -> (u8, bool) {
     let base_memory_address: u16 = ((arguments[1] as u16) << 8) + arguments[0] as u16;
     let memory_address: u16 = base_memory_address.overflowing_add(register.y() as u16).0;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );
     let boundary_crossed = base_memory_address & 0xff00 != memory_address & 0xff00;
 
     return (memory_value, boundary_crossed);
 }
 
-pub fn indirect_x(arguments: Vec<u8>, message_bus: &MessageBus, register: &Register) -> (u8, bool) {
+pub fn indirect_x(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &Register) -> (u8, bool) {
     let memory_address: u16 = (arguments[0] as u16).overflowing_add(register.x() as u16).0;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );
     let new_memory_address: u16 = memory_value as u16;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address.overflowing_add(1).0
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address.overflowing_add(1).0]
     );
     let new_memory_address: u16 = new_memory_address + ((memory_value as u16) << 8);
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, new_memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![new_memory_address]
     );
     let boundary_crossed = false;
 
     return (memory_value, boundary_crossed);
 }
 
-pub fn indirect_y(arguments: Vec<u8>, message_bus: &MessageBus, register: &Register) -> (u8, bool) {
+pub fn indirect_y(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &Register) -> (u8, bool) {
     let memory_address: u16 = arguments[0] as u16;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );
     let base_new_memory_address: u16 = memory_value as u16;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, memory_address.overflowing_add(1).0
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address.overflowing_add(1).0]
     );
     let base_new_memory_address: u16 = base_new_memory_address + ((memory_value as u16) << 8);
     let new_memory_address: u16 = base_new_memory_address.overflowing_add(register.y() as u16).0;
     let memory_value = message_bus.send_message(
-        MessageBusTarget::Memory, MessageBusMessage::Read, new_memory_address
+        MessageBusTarget::Memory, MessageBusMessage::Read, vec![new_memory_address]
     );
     let boundary_crossed = base_new_memory_address & 0xff00 != new_memory_address & 0xff00;
 
@@ -120,9 +120,9 @@ mod tests {
         let mut memory = Memory::new();
         memory.write_byte(0x30, 0x42);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = zero_page(arguments, &message_bus);
+        let value = zero_page(arguments, &mut message_bus);
 
         assert_eq!(value, (0x42, false))
     }
@@ -136,9 +136,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x05);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = zero_page_x(arguments, &message_bus, &register);
+        let value = zero_page_x(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -153,9 +153,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x36);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = zero_page_x(arguments, &message_bus, &register);
+        let value = zero_page_x(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -169,9 +169,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x05);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = zero_page_y(arguments, &message_bus, &register);
+        let value = zero_page_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -186,9 +186,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x36);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = zero_page_y(arguments, &message_bus, &register);
+        let value = zero_page_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -199,9 +199,9 @@ mod tests {
         let mut memory = Memory::new();
         memory.write_byte(0x5a3c, 0x42);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = absolute(arguments, &message_bus);
+        let value = absolute(arguments, &mut message_bus);
 
         assert_eq!(value, (0x42, false))
     }
@@ -215,9 +215,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x10);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = absolute_x(arguments, &message_bus, &register);
+        let value = absolute_x(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -231,9 +231,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x10);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = absolute_x(arguments, &message_bus, &register);
+        let value = absolute_x(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, true))
     }
@@ -247,9 +247,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x5b);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = absolute_x(arguments, &message_bus, &register);
+        let value = absolute_x(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, true))
     }
@@ -263,9 +263,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x10);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = absolute_y(arguments, &message_bus, &register);
+        let value = absolute_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -279,9 +279,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x10);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = absolute_y(arguments, &message_bus, &register);
+        let value = absolute_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, true))
     }
@@ -295,9 +295,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x5b);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = absolute_y(arguments, &message_bus, &register);
+        let value = absolute_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, true))
     }
@@ -313,9 +313,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x33);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = indirect_x(arguments, &message_bus, &register);
+        let value = indirect_x(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -331,9 +331,9 @@ mod tests {
         let mut register = Register::new();
         register.set_x(0x33);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = indirect_x(arguments, &message_bus, &register);
+        let value = indirect_x(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -349,9 +349,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x04);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = indirect_y(arguments, &message_bus, &register);
+        let value = indirect_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
@@ -367,9 +367,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x06);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = indirect_y(arguments, &message_bus, &register);
+        let value = indirect_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, true))
     }
@@ -385,9 +385,9 @@ mod tests {
         let mut register = Register::new();
         register.set_y(0x04);
 
-        let message_bus = MessageBus::new(&memory);
+        let mut message_bus = MessageBus::new(&mut memory);
 
-        let value = indirect_y(arguments, &message_bus, &register);
+        let value = indirect_y(arguments, &mut message_bus, &register);
 
         assert_eq!(value, (0x42, false))
     }
