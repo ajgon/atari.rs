@@ -53,7 +53,6 @@ impl Mnemonic for And {
         }
     }
 
-    // @todo return number of cycles used (including out of bounds)
     fn call(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &MessageBus) -> u8 {
         match self.opcode {
             0x29 => return self.call_immidiate(arguments, register),

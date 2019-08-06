@@ -17,7 +17,7 @@ pub struct Register {
 
 impl Register {
     pub fn new() -> Register {
-        return Register { pc: 0x0000, s: 0xFF, a: 0x00, x: 0x00, y: 0x00, p: 0b0011_0000 };
+        return Register { pc: 0x0600, s: 0xFF, a: 0x00, x: 0x00, y: 0x00, p: 0b0011_0000 };
     }
 
     pub fn pc(&self) -> u16 {
@@ -120,7 +120,7 @@ mod tests {
     #[test]
     fn test_getters() {
         let register = Register::new();
-        assert_eq!(register.pc(), 0x0000);
+        assert_eq!(register.pc(), 0x0600);
         assert_eq!(register.s(), 0xFF);
         assert_eq!(register.a(), 0x00);
         assert_eq!(register.x(), 0x00);
@@ -133,10 +133,10 @@ mod tests {
         let mut register = Register::new();
 
         register.increment_pc();
-        assert_eq!(register.pc(), 0x0001);
+        assert_eq!(register.pc(), 0x0601);
 
         register.increment_pc_by(14);
-        assert_eq!(register.pc(), 0x000F);
+        assert_eq!(register.pc(), 0x060F);
     }
 
     #[test]
