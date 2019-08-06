@@ -68,6 +68,10 @@ impl Register {
         return self.p & 0b00001000 != 0;
     }
 
+    pub fn negative_bit(&self) -> bool {
+        return self.p & 0b10000000 != 0;
+    }
+
     pub fn set_negative_bit(&mut self, value: bool) {
         if value {
             self.p |= 0b10000000;
