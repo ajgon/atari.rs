@@ -55,35 +55,45 @@ impl Mnemonic for Asl {
     }
 
     fn call_accumulator(&self, register: &mut Register) -> u8 {
-        alu::shift_left(register.a(), register);
+        let result = alu::shift_left(register.a(), register);
+        register.set_accumulator(result);
+
         return 2;
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
 
-        alu::shift_left(memory_value, register);
+        let result = alu::shift_left(memory_value, register);
+        register.set_accumulator(result);
+
         return 5;
     }
 
     fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
 
-        alu::shift_left(memory_value, register);
+        let result = alu::shift_left(memory_value, register);
+        register.set_accumulator(result);
+
         return 6;
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
 
-        alu::shift_left(memory_value, register);
+        let result = alu::shift_left(memory_value, register);
+        register.set_accumulator(result);
+
         return 6;
     }
 
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
 
-        alu::shift_left(memory_value, register);
+        let result = alu::shift_left(memory_value, register);
+        register.set_accumulator(result);
+
         return 7;
     }
 }

@@ -53,7 +53,7 @@ impl Mnemonic for Cpx {
 
         register.set_accumulator(register.x());
         register.set_carry_bit(true);
-        alu::sub(arguments[0], register);
+        alu::sub(register.a(), arguments[0], register);
         register.set_accumulator(accumulator_value);
 
         return 2;
@@ -65,7 +65,7 @@ impl Mnemonic for Cpx {
 
         register.set_accumulator(register.x());
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
+        alu::sub(register.a(), memory_value, register);
         register.set_accumulator(accumulator_value);
 
         return 3;
@@ -77,7 +77,7 @@ impl Mnemonic for Cpx {
 
         register.set_accumulator(register.x());
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
+        alu::sub(register.a(), memory_value, register);
         register.set_accumulator(accumulator_value);
 
         return 4;

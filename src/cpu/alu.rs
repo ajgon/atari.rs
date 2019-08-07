@@ -5,69 +5,73 @@ use crate::cpu::register::Register;
 // math despite the fact, that the D flag is set.
 // More info: http://www.6502.org/tutorials/decimal_mode.html#A
 
-pub fn add(operand: u8, register: &mut Register) {
-    let (result, carry_bit) = calculate_addition_result_in_proper_math_mode(operand, register);
+pub fn add(base: u8, operand: u8, register: &mut Register) -> u8 {
+    let (result, carry_bit) = calculate_addition_result_in_proper_math_mode(base, operand, register);
 
     // Order of these calls is important, don't change it
-    calculate_overflow_bit('+', operand, register);
-    register.set_accumulator(result);
+    calculate_overflow_bit('+', base, operand, register);
     register.set_carry_bit(carry_bit);
     register.set_zero_bit(result == 0);
     register.set_negative_bit(result > 127);
+
+    return result;
 }
 
-pub fn and(operand: u8, register: &mut Register) {
-    let result = operand & register.a();
+pub fn and(base: u8, operand: u8, register: &mut Register) -> u8 {
+    let result = base & operand;
 
-    register.set_accumulator(result);
     register.set_zero_bit(result == 0);
     register.set_negative_bit(result > 127);
+
+    return result;
 }
 
-pub fn shift_left(operand: u8, register: &mut Register) {
+pub fn shift_left(operand: u8, register: &mut Register) -> u8 {
     let result = operand << 1;
 
-    register.set_accumulator(result);
     register.set_carry_bit(operand > 127);
     register.set_zero_bit(result == 0);
     register.set_negative_bit(result > 127);
+
+    return result;
 }
 
-pub fn sub(operand: u8, register: &mut Register) {
-    let (result, carry_bit) = calculate_subtraction_result_in_proper_math_mode(operand, register);
+pub fn sub(base: u8, operand: u8, register: &mut Register) -> u8 {
+    let (result, carry_bit) = calculate_subtraction_result_in_proper_math_mode(base, operand, register);
 
-    calculate_overflow_bit('-', operand, register);
-    register.set_accumulator(result);
+    calculate_overflow_bit('-', base, operand, register);
     register.set_carry_bit(carry_bit);
     register.set_zero_bit(result == 0);
     register.set_negative_bit(result > 127);
+
+    return result;
 }
 
 
 // Based on <http://www.6502.org/tutorials/vflag.html>
-fn calculate_overflow_bit(operation: char, operand: u8, register: &mut Register) {
+fn calculate_overflow_bit(operation: char, base: u8, operand: u8, register: &mut Register) {
     if !register.decimal_bit() || operation == '-' {
-        register.set_overflow_bit(bin_overflow(operation, register.a(), operand, register.carry_bit()));
+        register.set_overflow_bit(bin_overflow(operation, base, operand, register.carry_bit()));
         return;
     };
 
-    register.set_overflow_bit(bcd_overflow(register.a(), operand, register.carry_bit()));
+    register.set_overflow_bit(bcd_overflow(base, operand, register.carry_bit()));
 }
 
-fn calculate_addition_result_in_proper_math_mode(operand: u8, register: &mut Register) -> (u8, bool) {
+fn calculate_addition_result_in_proper_math_mode(base: u8, operand: u8, register: &mut Register) -> (u8, bool) {
     if !register.decimal_bit() {
-        return bin_add(register.a(), operand, register.carry_bit());
+        return bin_add(base, operand, register.carry_bit());
     }
 
-    return bcd_add(register.a(), operand, register.carry_bit());
+    return bcd_add(base, operand, register.carry_bit());
 }
 
-fn calculate_subtraction_result_in_proper_math_mode(operand: u8, register: &mut Register) -> (u8, bool) {
+fn calculate_subtraction_result_in_proper_math_mode(base: u8, operand: u8, register: &mut Register) -> (u8, bool) {
     if !register.decimal_bit() {
-        return bin_sub(register.a(), operand, register.carry_bit())
+        return bin_sub(base, operand, register.carry_bit())
     }
 
-    return bcd_sub(register.a(), operand, register.carry_bit());
+    return bcd_sub(base, operand, register.carry_bit());
 }
 
 // BIN Math
@@ -181,129 +185,117 @@ mod tests {
     #[test]
     fn test_binary_sum() {
         let mut register = Register::new();
-        register.set_accumulator(2);
-        add(3, &mut register);
+        let result = add(2, 3, &mut register);
 
-        assert_eq!(register.a(), 5);
+        assert_eq!(result, 5);
         assert_eq!(register.p(), 0b0011_0000);
     }
 
     #[test]
     fn test_binary_sum_with_carry() {
         let mut register = Register::new();
-        register.set_accumulator(250);
-        add(250, &mut register);
+        let result = add(250, 250, &mut register);
 
-        assert_eq!(register.a(), 244);
+        assert_eq!(result, 244);
         assert_eq!(register.p(), 0b1011_0001);
     }
 
     #[test]
     fn test_binary_sum_with_carry_set() {
         let mut register = Register::new();
-        register.set_accumulator(10);
         register.set_carry_bit(true);
-        add(31, &mut register);
+        let result = add(10, 31, &mut register);
 
-        assert_eq!(register.a(), 42);
+        assert_eq!(result, 42);
         assert_eq!(register.p(), 0b0011_0000);
     }
 
     #[test]
     fn test_binary_sum_with_carry_set_and_basic_sum_with_carry() {
         let mut register = Register::new();
-        register.set_accumulator(100);
         register.set_carry_bit(true);
-        add(200, &mut register);
+        let result = add(100, 200, &mut register);
 
-        assert_eq!(register.a(), 45);
+        assert_eq!(result, 45);
         assert_eq!(register.p(), 0b0011_0001);
     }
 
     #[test]
     fn test_binary_sum_with_carry_set_and_basic_sum_with_overflow() {
         let mut register = Register::new();
-        register.set_accumulator(100);
         register.set_carry_bit(true);
-        add(27, &mut register);
+        let result = add(100, 27, &mut register);
 
-        assert_eq!(register.a(), 128);
+        assert_eq!(result, 128);
         assert_eq!(register.p(), 0b1111_0000);
     }
 
     #[test]
     fn test_binary_sum_with_carry_set_and_basic_sum_255() {
         let mut register = Register::new();
-        register.set_accumulator(127);
         register.set_carry_bit(true);
-        add(128, &mut register);
+        let result = add(127, 128, &mut register);
 
-        assert_eq!(register.a(), 0);
+        assert_eq!(result, 0);
         assert_eq!(register.p(), 0b0011_0011);
     }
 
     #[test]
     fn test_binary_sum_with_zero() {
         let mut register = Register::new();
-        register.set_accumulator(64);
-        add(192, &mut register);
+        let result = add(64, 192, &mut register);
 
-        assert_eq!(register.a(), 0);
+        assert_eq!(result, 0);
         assert_eq!(register.p(), 0b0011_0011);
     }
 
     #[test]
     fn test_binary_sum_with_overflow() {
         let mut register = Register::new();
-        register.set_accumulator(128);
-        add(255, &mut register);
+        let result = add(128, 255, &mut register);
 
-        assert_eq!(register.a(), 127);
+        assert_eq!(result, 127);
         assert_eq!(register.p(), 0b0111_0001);
     }
 
     #[test]
     fn test_bcd_sum() {
         let mut register = Register::new();
-        register.set_accumulator(0b0001_0101); // 15 in BCD
         register.set_decimal_bit(true);
-        add(0b0010_0111, &mut register); // 27 in BCD
+        let result = add(0b0001_0101, 0b0010_0111, &mut register); // 15 and 27 in BCD
 
-        assert_eq!(register.a(), 0b0100_0010); // 42 in BCD
+        assert_eq!(result, 0b0100_0010); // 42 in BCD
         assert_eq!(register.p(), 0b0011_1000);
     }
 
     #[test]
     fn test_bcd_sum_with_carry_bit_set() {
         let mut register = Register::new();
-        register.set_accumulator(0b0001_0101); // 15 in BCD
         register.set_decimal_bit(true);
         register.set_carry_bit(true);
-        add(0b0010_0111, &mut register); // 27 in BCD
+        let result = add(0b0001_0101, 0b0010_0111, &mut register); // 15 and 27 in BCD
 
-        assert_eq!(register.a(), 0b0100_0011); // 43 in BCD
+        assert_eq!(result, 0b0100_0011); // 43 in BCD
         assert_eq!(register.p(), 0b0011_1000);
     }
 
     #[test]
     fn test_bcd_sum_with_carry() {
         let mut register = Register::new();
-        register.set_accumulator(0b0001_0101); // 15 in BCD
         register.set_decimal_bit(true);
-        add(0b1000_0111, &mut register); // 87 in BCD
+        let result = add(0b0001_0101, 0b1000_0111, &mut register); // 15 and 87 in BCD
 
-        assert_eq!(register.a(), 0b0000_0010); // 2 in BCD
+        assert_eq!(result, 0b0000_0010); // 2 in BCD
         assert_eq!(register.p(), 0b0011_1001);
     }
 
     #[test]
     fn test_bcd_sum_with_zero() {
         let mut register = Register::new();
-        register.set_accumulator(0b0001_0101); // 15 in BCD
         register.set_decimal_bit(true);
-        add(0b1000_0101, &mut register); // 85 in BCD
+        let result = add(0b0001_0101, 0b1000_0101, &mut register); // 15 and 85 in BCD
 
-        assert_eq!(register.a(), 0b0000_0000); // 2 in BCD
+        assert_eq!(result, 0b0000_0000); // 2 in BCD
         assert_eq!(register.p(), 0b0011_1011);
     }
 
@@ -312,342 +304,314 @@ mod tests {
     #[test]
     fn test_bcd_sum_with_overflow_1() {
         let mut register = Register::new();
-        register.set_accumulator(0b0010_0100); // 24 in BCD
         register.set_decimal_bit(true);
-        add(0b0101_0110, &mut register); // 56 in BCD
+        let result = add(0b0010_0100, 0b0101_0110, &mut register); // 24 and 56 in BCD
 
-        assert_eq!(register.a(), 0b1000_0000); // 80 in BCD
+        assert_eq!(result, 0b1000_0000); // 80 in BCD
         assert_eq!(register.p(), 0b1111_1000);
     }
 
     #[test]
     fn test_bcd_sum_with_overflow_2() {
         let mut register = Register::new();
-        register.set_accumulator(0b1001_0011); // 93 in BCD
         register.set_decimal_bit(true);
-        add(0b1000_0010, &mut register); // 82 in BCD
+        let result = add(0b1001_0011, 0b1000_0010, &mut register); // 93 and 82 in BCD
 
-        assert_eq!(register.a(), 0b0111_0101); // 75 in BCD
+        assert_eq!(result, 0b0111_0101); // 75 in BCD
         assert_eq!(register.p(), 0b0111_1001);
     }
 
     #[test]
     fn test_bcd_sum_with_overflow_3() {
         let mut register = Register::new();
-        register.set_accumulator(0b1000_1001); // 89 in BCD
         register.set_decimal_bit(true);
-        add(0b0111_0110, &mut register); // 76 in BCD
+        let result = add(0b1000_1001, 0b0111_0110, &mut register); // 89 and 76 in BCD
 
-        assert_eq!(register.a(), 0b0110_0101); // 65 in BCD
+        assert_eq!(result, 0b0110_0101); // 65 in BCD
         assert_eq!(register.p(), 0b0011_1001);
     }
 
     #[test]
     fn test_bcd_sum_with_overflow_4() {
         let mut register = Register::new();
-        register.set_accumulator(0b1000_0000); // 80 in BCD
         register.set_decimal_bit(true);
-        add(0b1111_0000, &mut register); // invalid number in BCD
+        let result = add(0b1000_0000, 0b1111_0000, &mut register); // 80 and invalid number in BCD
 
-        assert_eq!(register.a(), 0b1101_0000); // invalid result in BCD
+        assert_eq!(result, 0b1101_0000); // invalid result in BCD
         assert_eq!(register.p(), 0b1111_1001);
     }
 
     #[test]
     fn test_bcd_sum_with_overflow_5() {
         let mut register = Register::new();
-        register.set_accumulator(0b1000_0000); // 80 in BCD
         register.set_decimal_bit(true);
-        add(0b1111_1010, &mut register); // invalid number in BCD
+        let result = add(0b1000_0000, 0b1111_1010, &mut register); // 80 and invalid number in BCD
 
-        assert_eq!(register.a(), 0b1110_0000); // invalid result in BCD
+        assert_eq!(result, 0b1110_0000); // invalid result in BCD
         assert_eq!(register.p(), 0b1011_1001);
     }
 
     #[test]
     fn test_bcd_sum_with_overflow_6() {
         let mut register = Register::new();
-        register.set_accumulator(0b0010_1111); // invalid number in BCD
         register.set_decimal_bit(true);
-        add(0b0100_1111, &mut register); // invalid number in BCD
+        let result = add(0b0010_1111, 0b0100_1111, &mut register); // two invalid numbers in BCD
 
-        assert_eq!(register.a(), 0b0111_0100); // invalid result in BCD
+        assert_eq!(result, 0b0111_0100); // invalid result in BCD
         assert_eq!(register.p(), 0b0011_1000);
     }
 
     #[test]
     fn test_bcd_sum_with_overflow_7() {
         let mut register = Register::new();
-        register.set_accumulator(0b0010_1111); // invalid number in BCD
         register.set_decimal_bit(true);
-        add(0b0010_1111, &mut register); // invalid number in BCD
+        let result = add(0b0010_1111, 0b0010_1111, &mut register); // two invalid numbers in BCD
 
-        assert_eq!(register.a(), 0b0101_0100); // invalid result in BCD
+        assert_eq!(result, 0b0101_0100); // invalid result in BCD
         assert_eq!(register.p(), 0b0011_1000);
     }
 
     #[test]
     fn test_binary_and() {
         let mut register = Register::new();
-        register.set_accumulator(0b0110_0111);
-        and(0b1010_1010, &mut register);
+        let result = and(0b0110_0111, 0b1010_1010, &mut register);
 
-        assert_eq!(register.a(), 0b0010_0010);
+        assert_eq!(result, 0b0010_0010);
         assert_eq!(register.p(), 0b0011_0000);
     }
 
     #[test]
     fn test_binary_and_with_zero() {
         let mut register = Register::new();
-        register.set_accumulator(0b1111_0000);
-        and(0b0000_1111, &mut register);
+        let result = and(0b1111_0000, 0b0000_1111, &mut register);
 
-        assert_eq!(register.a(), 0b0000_0000);
+        assert_eq!(result, 0b0000_0000);
         assert_eq!(register.p(), 0b0011_0010);
     }
 
     #[test]
     fn test_binary_and_with_negative_result() {
         let mut register = Register::new();
-        register.set_accumulator(0b1001_0101);
-        and(0b1010_1010, &mut register);
+        let result = and(0b1001_0101, 0b1010_1010, &mut register);
 
-        assert_eq!(register.a(), 0b1000_0000);
+        assert_eq!(result, 0b1000_0000);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
     #[test]
     fn test_shift_left() {
         let mut register = Register::new();
-        shift_left(0b0010_1100, &mut register);
+        let result = shift_left(0b0010_1100, &mut register);
 
-        assert_eq!(register.a(), 0b0101_1000);
+        assert_eq!(result, 0b0101_1000);
         assert_eq!(register.p(), 0b0011_0000);
     }
 
     #[test]
     fn test_shift_left_with_carry() {
         let mut register = Register::new();
-        shift_left(0b1010_1100, &mut register);
+        let result = shift_left(0b1010_1100, &mut register);
 
-        assert_eq!(register.a(), 0b0101_1000);
+        assert_eq!(result, 0b0101_1000);
         assert_eq!(register.p(), 0b0011_0001);
     }
 
     #[test]
     fn test_shift_left_with_zero() {
         let mut register = Register::new();
-        shift_left(0b0000_0000, &mut register);
+        let result = shift_left(0b0000_0000, &mut register);
 
-        assert_eq!(register.a(), 0b0000_0000);
+        assert_eq!(result, 0b0000_0000);
         assert_eq!(register.p(), 0b0011_0010);
     }
 
     #[test]
     fn test_shift_left_with_negative_bit() {
         let mut register = Register::new();
-        shift_left(0b0110_1100, &mut register);
+        let result = shift_left(0b0110_1100, &mut register);
 
-        assert_eq!(register.a(), 0b1101_1000);
+        assert_eq!(result, 0b1101_1000);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
     #[test]
     fn test_binary_subtraction() {
         let mut register = Register::new();
-        register.set_accumulator(100);
         register.set_carry_bit(true);
-        sub(31, &mut register);
+        let result = sub(100, 31, &mut register);
 
-        assert_eq!(register.a(), 69);
+        assert_eq!(result, 69);
         assert_eq!(register.p(), 0b0011_0001);
     }
 
     #[test]
     fn test_binary_subtraction_with_negative_result() {
         let mut register = Register::new();
-        register.set_accumulator(100);
         register.set_carry_bit(true);
-        sub(120, &mut register);
+        let result = sub(100, 120, &mut register);
 
-        assert_eq!(register.a(), 236);
+        assert_eq!(result, 236);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
     #[test]
     fn test_binary_subtraction_without_carry() {
         let mut register = Register::new();
-        register.set_accumulator(100);
-        sub(31, &mut register);
+        let result = sub(100, 31, &mut register);
 
-        assert_eq!(register.a(), 68);
+        assert_eq!(result, 68);
         assert_eq!(register.p(), 0b0011_0001);
     }
 
     #[test]
     fn test_binary_subtraction_with_negative_result_without_carry() {
         let mut register = Register::new();
-        register.set_accumulator(100);
-        sub(120, &mut register);
+        let result = sub(100, 120, &mut register);
 
-        assert_eq!(register.a(), 235);
+        assert_eq!(result, 235);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
     #[test]
     fn test_binary_subtraction_with_overflow() {
         let mut register = Register::new();
-        register.set_accumulator(0);
         register.set_carry_bit(true);
-        sub(1, &mut register);
+        let result = sub(0, 1, &mut register);
 
-        assert_eq!(register.a(), 255);
+        assert_eq!(result, 255);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
     #[test]
     fn test_binary_subtraction_with_overflow_2() {
         let mut register = Register::new();
-        register.set_accumulator(128);
         register.set_carry_bit(true);
-        sub(1, &mut register);
+        let result = sub(128, 1, &mut register);
 
-        assert_eq!(register.a(), 127);
+        assert_eq!(result, 127);
         assert_eq!(register.p(), 0b0111_0001);
     }
 
     #[test]
     fn test_binary_subtraction_with_overflow_3() {
         let mut register = Register::new();
-        register.set_accumulator(127);
         register.set_carry_bit(true);
-        sub(255, &mut register);
+        let result = sub(127, 255, &mut register);
 
-        assert_eq!(register.a(), 128);
+        assert_eq!(result, 128);
         assert_eq!(register.p(), 0b1111_0000);
     }
 
     #[test]
     fn test_binary_subtraction_with_overflow_4() {
         let mut register = Register::new();
-        register.set_accumulator(192);
-        sub(64, &mut register);
+        let result = sub(192, 64, &mut register);
 
-        assert_eq!(register.a(), 127);
+        assert_eq!(result, 127);
         assert_eq!(register.p(), 0b0111_0001);
     }
 
     #[test]
     fn test_binary_subtraction_with_zero() {
         let mut register = Register::new();
-        register.set_accumulator(50);
         register.set_carry_bit(true);
-        sub(50, &mut register);
+        let result = sub(50, 50, &mut register);
 
-        assert_eq!(register.a(), 0);
+        assert_eq!(result, 0);
         assert_eq!(register.p(), 0b0011_0011);
     }
 
     #[test]
     fn test_binary_subtraction_of_negatives_with_zero() {
         let mut register = Register::new();
-        register.set_accumulator(150);
-        sub(149, &mut register);
+        let result = sub(150, 149, &mut register);
 
-        assert_eq!(register.a(), 0);
+        assert_eq!(result, 0);
         assert_eq!(register.p(), 0b0011_0011);
     }
 
     #[test]
     fn test_bcd_subtraction() {
         let mut register = Register::new();
-        register.set_accumulator(0b0101_0000); // 50 in BCD
         register.set_decimal_bit(true);
         register.set_carry_bit(true);
-        sub(0b0001_0101, &mut register); // 15 in BCD
+        let result = sub(0b0101_0000, 0b0001_0101, &mut register); // 50 and 15 in BCD
 
-        assert_eq!(register.a(), 0b0011_0101); // 35 in BCD
+        assert_eq!(result, 0b0011_0101); // 35 in BCD
         assert_eq!(register.p(), 0b0011_1001);
     }
 
     #[test]
     fn test_bcd_subtraction_with_negative_result() {
         let mut register = Register::new();
-        register.set_accumulator(0b0001_0101); // 15 in BCD
         register.set_decimal_bit(true);
         register.set_carry_bit(true);
-        sub(0b0101_0000, &mut register); // 50 in BCD
+        let result = sub(0b0001_0101, 0b0101_0000, &mut register); // 15 and 50 in BCD
 
-        assert_eq!(register.a(), 0b0110_0101); // 65 in BCD (wraparound)
+        assert_eq!(result, 0b0110_0101); // 65 in BCD (wraparound)
         assert_eq!(register.p(), 0b0011_1000);
     }
 
     #[test]
     fn test_bcd_subtraction_with_zero() {
         let mut register = Register::new();
-        register.set_accumulator(0b0101_0000); // 50 in BCD
         register.set_decimal_bit(true);
         register.set_carry_bit(true);
-        sub(0b0101_0000, &mut register); // 50 in BCD
+        let result = sub(0b0101_0000, 0b0101_0000, &mut register); // 50 and 50 in BCD
 
-        assert_eq!(register.a(), 0b0000_0000); // 0 in BCD
+        assert_eq!(result, 0b0000_0000); // 0 in BCD
         assert_eq!(register.p(), 0b0011_1011);
     }
 
     #[test]
     fn test_bcd_subtraction_with_negative_flag() {
         let mut register = Register::new();
-        register.set_accumulator(0b1001_0101); // 95 in BCD
         register.set_decimal_bit(true);
         register.set_carry_bit(true);
-        sub(0b0000_0010, &mut register); // 2 in BCD
+        let result = sub(0b1001_0101, 0b0000_0010, &mut register); // 95 and 2 in BCD
 
-        assert_eq!(register.a(), 0b1001_0011); // 93 in BCD
+        assert_eq!(result, 0b1001_0011); // 93 in BCD
         assert_eq!(register.p(), 0b1011_1001);
     }
 
     #[test]
     fn test_bcd_subtraction_with_overflow() {
         let mut register = Register::new();
-        register.set_accumulator(0b1000_0000); // 80 in BCD
         register.set_decimal_bit(true);
         register.set_carry_bit(true);
-        sub(0b0000_0001, &mut register); // 1 in BCD
+        let result = sub(0b1000_0000, 0b0000_0001, &mut register); // 80 and 1 in BCD
 
-        assert_eq!(register.a(), 0b0111_1001); // 79 in BCD
+        assert_eq!(result, 0b0111_1001); // 79 in BCD
         assert_eq!(register.p(), 0b0111_1001);
     }
 
     #[test]
     fn test_bcd_subtraction_without_carry() {
         let mut register = Register::new();
-        register.set_accumulator(0b0101_0000); // 50 in BCD
         register.set_decimal_bit(true);
-        sub(0b0001_0101, &mut register); // 15 in BCD
+        let result = sub(0b0101_0000, 0b0001_0101, &mut register); // 50 and 15 in BCD
 
-        assert_eq!(register.a(), 0b0011_0100); // 34 in BCD
+        assert_eq!(result, 0b0011_0100); // 34 in BCD
         assert_eq!(register.p(), 0b0011_1001);
     }
 
     #[test]
     fn test_bcd_subtraction_with_negative_result_without_carry() {
         let mut register = Register::new();
-        register.set_accumulator(0b0001_0101); // 15 in BCD
         register.set_decimal_bit(true);
-        sub(0b0101_0000, &mut register); // 50 in BCD
+        let result = sub(0b0001_0101, 0b0101_0000, &mut register); // 15 and 50 in BCD
 
-        assert_eq!(register.a(), 0b0110_0100); // 64 in BCD (wraparound)
+        assert_eq!(result, 0b0110_0100); // 64 in BCD (wraparound)
         assert_eq!(register.p(), 0b0011_1000);
     }
 
     #[test]
     fn test_bcd_subtraction_with_zero_without_carry() {
         let mut register = Register::new();
-        register.set_accumulator(0b0101_0000); // 50 in BCD
         register.set_decimal_bit(true);
-        sub(0b0100_1001, &mut register); // 49 in BCD
+        let result = sub(0b0101_0000, 0b0100_1001, &mut register); // 50 and 49 in BCD
 
-        assert_eq!(register.a(), 0b0000_0000); // 0 in BCD
+        assert_eq!(result, 0b0000_0000); // 0 in BCD
         assert_eq!(register.p(), 0b0011_1011);
     }
 }

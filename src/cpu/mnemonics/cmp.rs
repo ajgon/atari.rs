@@ -64,87 +64,71 @@ impl Mnemonic for Cmp {
     }
 
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8 {
-        let accumulator_value = register.a();
-
         register.set_carry_bit(true);
-        alu::sub(arguments[0], register);
-        register.set_accumulator(accumulator_value);
+        alu::sub(register.a(), arguments[0], register);
 
         return 2;
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
-        let accumulator_value = register.a();
 
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
-        register.set_accumulator(accumulator_value);
+        alu::sub(register.a(), memory_value, register);
 
         return 3;
     }
 
     fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
-        let accumulator_value = register.a();
 
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
-        register.set_accumulator(accumulator_value);
+        alu::sub(register.a(), memory_value, register);
 
         return 4;
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
-        let accumulator_value = register.a();
 
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
-        register.set_accumulator(accumulator_value);
+        alu::sub(register.a(), memory_value, register);
 
         return 4;
     }
 
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
-        let accumulator_value = register.a();
 
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
-        register.set_accumulator(accumulator_value);
+        alu::sub(register.a(), memory_value, register);
 
         return if boundary_crossed { 5u8 } else { 4u8 };
     }
 
     fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::absolute_y(arguments, message_bus, register);
-        let accumulator_value = register.a();
 
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
-        register.set_accumulator(accumulator_value);
+        alu::sub(register.a(), memory_value, register);
 
         return if boundary_crossed { 5u8 } else { 4u8 };
     }
 
     fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, _boundary_crossed) = addressing::indirect_x(arguments, message_bus, register);
-        let accumulator_value = register.a();
 
         register.set_carry_bit(true);
-        alu::sub(memory_value, register);
-        register.set_accumulator(accumulator_value);
+        alu::sub(register.a(), memory_value, register);
 
         return 6;
     }
 
     fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_value, boundary_crossed) = addressing::indirect_y(arguments, message_bus, register);
-        let accumulator_value = register.a();
 
-        alu::sub(memory_value, register);
-        register.set_accumulator(accumulator_value);
+        register.set_carry_bit(true);
+        alu::sub(register.a(), memory_value, register);
 
         return if boundary_crossed { 6u8 } else { 5u8 };
     }
