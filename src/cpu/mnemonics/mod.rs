@@ -19,6 +19,7 @@ mod cmp;
 mod cpx;
 mod cpy;
 mod dec;
+mod dex;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -40,6 +41,7 @@ use cmp::Cmp;
 use cpx::Cpx;
 use cpy::Cpy;
 use dec::Dec;
+use dex::Dex;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -92,6 +94,7 @@ impl Mnemonics {
             0xE0 | 0xE4 | 0xEC => Box::new(Cpx::new(opcode)),
             0xC0 | 0xC4 | 0xCC => Box::new(Cpy::new(opcode)),
             0xC6 | 0xD6 | 0xCE | 0xDE => Box::new(Dec::new(opcode)),
+            0xCA => Box::new(Dex::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
