@@ -56,6 +56,14 @@ pub fn sub(base: u8, operand: u8, register: &mut Register) -> u8 {
     return result;
 }
 
+pub fn xor(base: u8, operand: u8, register: &mut Register) -> u8 {
+    let result = base ^ operand;
+
+    register.set_zero_bit(result == 0);
+    register.set_negative_bit(result > 127);
+
+    return result;
+}
 
 // Based on <http://www.6502.org/tutorials/vflag.html>
 fn calculate_overflow_bit(operation: char, base: u8, operand: u8, register: &mut Register) {
@@ -189,6 +197,7 @@ mod tests {
     use super::decrement;
     use super::shift_left;
     use super::sub;
+    use super::xor;
 
     use crate::cpu::register::Register;
 
@@ -659,5 +668,32 @@ mod tests {
 
         assert_eq!(result, 0b0000_0000); // 0 in BCD
         assert_eq!(register.p(), 0b0011_1011);
+    }
+
+    #[test]
+    fn test_binary_xor() {
+        let mut register = Register::new();
+        let result = xor(0b0110_0111, 0b0010_1010, &mut register);
+
+        assert_eq!(result, 0b0100_1101);
+        assert_eq!(register.p(), 0b0011_0000);
+    }
+
+    #[test]
+    fn test_binary_xor_with_zero() {
+        let mut register = Register::new();
+        let result = xor(0b0000_1111, 0b0000_1111, &mut register);
+
+        assert_eq!(result, 0b0000_0000);
+        assert_eq!(register.p(), 0b0011_0010);
+    }
+
+    #[test]
+    fn test_binary_xor_with_negative_result() {
+        let mut register = Register::new();
+        let result = xor(0b0001_0101, 0b1010_1010, &mut register);
+
+        assert_eq!(result, 0b1011_1111);
+        assert_eq!(register.p(), 0b1011_0000);
     }
 }

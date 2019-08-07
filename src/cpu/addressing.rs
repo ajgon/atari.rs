@@ -196,7 +196,7 @@ mod tests {
     }
 
     #[test]
-    fn test_addrss_zero_page_y_out_of_bounds() {
+    fn test_zero_page_y_out_of_bounds() {
         let arguments = vec![0xff];
         let mut memory = Memory::new();
         memory.write_byte(0x35, 0x42);
