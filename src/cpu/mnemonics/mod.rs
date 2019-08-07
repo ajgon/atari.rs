@@ -22,6 +22,7 @@ mod dec;
 mod dex;
 mod dey;
 mod eor;
+mod inc;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -46,6 +47,7 @@ use dec::Dec;
 use dex::Dex;
 use dey::Dey;
 use eor::Eor;
+use inc::Inc;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -101,6 +103,7 @@ impl Mnemonics {
             0xCA => Box::new(Dex::new(opcode)),
             0x88 => Box::new(Dey::new(opcode)),
             0x49 | 0x45 | 0x55 | 0x4d | 0x5d | 0x59 | 0x41 | 0x51 => Box::new(Eor::new(opcode)),
+            0xE6 | 0xF6 | 0xEE | 0xFE => Box::new(Inc::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }

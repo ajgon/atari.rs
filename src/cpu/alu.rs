@@ -35,6 +35,15 @@ pub fn decrement(operand: u8, register: &mut Register) -> u8 {
     return result;
 }
 
+pub fn increment(operand: u8, register: &mut Register) -> u8 {
+    let result = operand.overflowing_add(1).0;
+
+    register.set_zero_bit(result == 0);
+    register.set_negative_bit(result > 127);
+
+    return result;
+}
+
 pub fn shift_left(operand: u8, register: &mut Register) -> u8 {
     let result = operand << 1;
 
@@ -195,6 +204,7 @@ mod tests {
     use super::add;
     use super::and;
     use super::decrement;
+    use super::increment;
     use super::shift_left;
     use super::sub;
     use super::xor;
@@ -414,6 +424,33 @@ mod tests {
         let result = and(0b1001_0101, 0b1010_1010, &mut register);
 
         assert_eq!(result, 0b1000_0000);
+        assert_eq!(register.p(), 0b1011_0000);
+    }
+
+    #[test]
+    fn test_increment() {
+        let mut register = Register::new();
+        let result = increment(0x41, &mut register);
+
+        assert_eq!(result, 0x42);
+        assert_eq!(register.p(), 0b0011_0000);
+    }
+
+    #[test]
+    fn test_increment_with_zero() {
+        let mut register = Register::new();
+        let result = increment(0xFF, &mut register);
+
+        assert_eq!(result, 0x00);
+        assert_eq!(register.p(), 0b0011_0010);
+    }
+
+    #[test]
+    fn test_increment_with_negative_bit() {
+        let mut register = Register::new();
+        let result = increment(0x81, &mut register);
+
+        assert_eq!(result, 0x82);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
