@@ -17,6 +17,7 @@ mod cli;
 mod clv;
 mod cmp;
 mod cpx;
+mod cpy;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -36,6 +37,7 @@ use cli::Cli;
 use clv::Clv;
 use cmp::Cmp;
 use cpx::Cpx;
+use cpy::Cpy;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -86,6 +88,7 @@ impl Mnemonics {
             0xB8 => Box::new(Clv::new(opcode)),
             0xC9 | 0xC5 | 0xD5 | 0xCD | 0xDD | 0xD9 | 0xC1 | 0xD1 => Box::new(Cmp::new(opcode)),
             0xE0 | 0xE4 | 0xEC => Box::new(Cpx::new(opcode)),
+            0xC0 | 0xC4 | 0xCC => Box::new(Cpy::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
