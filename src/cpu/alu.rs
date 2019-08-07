@@ -26,6 +26,15 @@ pub fn and(base: u8, operand: u8, register: &mut Register) -> u8 {
     return result;
 }
 
+pub fn decrement(operand: u8, register: &mut Register) -> u8 {
+    let result = operand.overflowing_sub(1).0;
+
+    register.set_zero_bit(result == 0);
+    register.set_negative_bit(result > 127);
+
+    return result;
+}
+
 pub fn shift_left(operand: u8, register: &mut Register) -> u8 {
     let result = operand << 1;
 
@@ -177,6 +186,7 @@ fn bcd_overflow(a: u8, b: u8, initial_carry: bool) -> bool {
 mod tests {
     use super::add;
     use super::and;
+    use super::decrement;
     use super::shift_left;
     use super::sub;
 
@@ -395,6 +405,42 @@ mod tests {
         let result = and(0b1001_0101, 0b1010_1010, &mut register);
 
         assert_eq!(result, 0b1000_0000);
+        assert_eq!(register.p(), 0b1011_0000);
+    }
+
+    #[test]
+    fn test_decrement() {
+        let mut register = Register::new();
+        let result = decrement(0x43, &mut register);
+
+        assert_eq!(result, 0x42);
+        assert_eq!(register.p(), 0b0011_0000);
+    }
+
+    #[test]
+    fn test_decrement_with_zero() {
+        let mut register = Register::new();
+        let result = decrement(0x01, &mut register);
+
+        assert_eq!(result, 0x00);
+        assert_eq!(register.p(), 0b0011_0010);
+    }
+
+    #[test]
+    fn test_decrement_with_negative_bit() {
+        let mut register = Register::new();
+        let result = decrement(0x83, &mut register);
+
+        assert_eq!(result, 0x82);
+        assert_eq!(register.p(), 0b1011_0000);
+    }
+
+    #[test]
+    fn test_decrement_with_overflow() {
+        let mut register = Register::new();
+        let result = decrement(0x00, &mut register);
+
+        assert_eq!(result, 0xff);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
