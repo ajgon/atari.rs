@@ -76,6 +76,10 @@ impl Register {
         return self.p & 0b00000010 != 0;
     }
 
+    pub fn overflow_bit(&self) -> bool {
+        return self.p & 0b01000000 != 0;
+    }
+
     pub fn decimal_bit(&self) -> bool {
         return self.p & 0b00001000 != 0;
     }
