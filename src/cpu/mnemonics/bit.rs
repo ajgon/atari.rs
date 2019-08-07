@@ -48,7 +48,7 @@ impl Mnemonic for Bit {
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
 
         register.set_negative_bit(memory_value & 0x80 == 0x80);
         register.set_overflow_bit(memory_value & 0x40 == 0x40);
@@ -58,7 +58,7 @@ impl Mnemonic for Bit {
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
 
         register.set_negative_bit(memory_value & 0x80 == 0x80);
         register.set_overflow_bit(memory_value & 0x40 == 0x40);

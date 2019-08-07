@@ -60,7 +60,7 @@ impl Mnemonic for Cpy {
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
         let accumulator_value = register.a();
 
         register.set_accumulator(register.y());
@@ -72,7 +72,7 @@ impl Mnemonic for Cpy {
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
         let accumulator_value = register.a();
 
         register.set_accumulator(register.y());

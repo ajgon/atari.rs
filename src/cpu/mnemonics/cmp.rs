@@ -71,7 +71,7 @@ impl Mnemonic for Cmp {
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
 
         register.set_carry_bit(true);
         alu::sub(register.a(), memory_value, register);
@@ -80,7 +80,7 @@ impl Mnemonic for Cmp {
     }
 
     fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
 
         register.set_carry_bit(true);
         alu::sub(register.a(), memory_value, register);
@@ -89,7 +89,7 @@ impl Mnemonic for Cmp {
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
 
         register.set_carry_bit(true);
         alu::sub(register.a(), memory_value, register);
@@ -98,7 +98,7 @@ impl Mnemonic for Cmp {
     }
 
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
+        let (_memory_address, memory_value, boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
 
         register.set_carry_bit(true);
         alu::sub(register.a(), memory_value, register);
@@ -107,7 +107,7 @@ impl Mnemonic for Cmp {
     }
 
     fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, boundary_crossed) = addressing::absolute_y(arguments, message_bus, register);
+        let (_memory_address, memory_value, boundary_crossed) = addressing::absolute_y(arguments, message_bus, register);
 
         register.set_carry_bit(true);
         alu::sub(register.a(), memory_value, register);
@@ -116,7 +116,7 @@ impl Mnemonic for Cmp {
     }
 
     fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, _boundary_crossed) = addressing::indirect_x(arguments, message_bus, register);
+        let (_memory_address, memory_value, _boundary_crossed) = addressing::indirect_x(arguments, message_bus, register);
 
         register.set_carry_bit(true);
         alu::sub(register.a(), memory_value, register);
@@ -125,7 +125,7 @@ impl Mnemonic for Cmp {
     }
 
     fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (memory_value, boundary_crossed) = addressing::indirect_y(arguments, message_bus, register);
+        let (_memory_address, memory_value, boundary_crossed) = addressing::indirect_y(arguments, message_bus, register);
 
         register.set_carry_bit(true);
         alu::sub(register.a(), memory_value, register);
