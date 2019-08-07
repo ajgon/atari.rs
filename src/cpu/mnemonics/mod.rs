@@ -12,6 +12,7 @@ mod brk;
 mod bvc;
 mod bvs;
 mod clc;
+mod cld;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -26,6 +27,7 @@ use brk::Brk;
 use bvc::Bvc;
 use bvs::Bvs;
 use clc::Clc;
+use cld::Cld;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -71,6 +73,7 @@ impl Mnemonics {
             0x50 => Box::new(Bvc::new(opcode)),
             0x70 => Box::new(Bvs::new(opcode)),
             0x18 => Box::new(Clc::new(opcode)),
+            0xD8 => Box::new(Cld::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
