@@ -11,8 +11,7 @@ pub fn add(base: u8, operand: u8, register: &mut Register) -> u8 {
     // Order of these calls is important, don't change it
     calculate_overflow_bit('+', base, operand, register);
     register.set_carry_bit(carry_bit);
-    register.set_zero_bit(result == 0);
-    register.set_negative_bit(result > 127);
+    register.calculate_nz_bits(result);
 
     return result;
 }
@@ -20,8 +19,7 @@ pub fn add(base: u8, operand: u8, register: &mut Register) -> u8 {
 pub fn and(base: u8, operand: u8, register: &mut Register) -> u8 {
     let result = base & operand;
 
-    register.set_zero_bit(result == 0);
-    register.set_negative_bit(result > 127);
+    register.calculate_nz_bits(result);
 
     return result;
 }
@@ -29,8 +27,7 @@ pub fn and(base: u8, operand: u8, register: &mut Register) -> u8 {
 pub fn decrement(operand: u8, register: &mut Register) -> u8 {
     let result = operand.overflowing_sub(1).0;
 
-    register.set_zero_bit(result == 0);
-    register.set_negative_bit(result > 127);
+    register.calculate_nz_bits(result);
 
     return result;
 }
@@ -38,8 +35,7 @@ pub fn decrement(operand: u8, register: &mut Register) -> u8 {
 pub fn increment(operand: u8, register: &mut Register) -> u8 {
     let result = operand.overflowing_add(1).0;
 
-    register.set_zero_bit(result == 0);
-    register.set_negative_bit(result > 127);
+    register.calculate_nz_bits(result);
 
     return result;
 }
@@ -48,8 +44,7 @@ pub fn shift_left(operand: u8, register: &mut Register) -> u8 {
     let result = operand << 1;
 
     register.set_carry_bit(operand > 127);
-    register.set_zero_bit(result == 0);
-    register.set_negative_bit(result > 127);
+    register.calculate_nz_bits(result);
 
     return result;
 }
@@ -59,8 +54,7 @@ pub fn sub(base: u8, operand: u8, register: &mut Register) -> u8 {
 
     calculate_overflow_bit('-', base, operand, register);
     register.set_carry_bit(carry_bit);
-    register.set_zero_bit(result == 0);
-    register.set_negative_bit(result > 127);
+    register.calculate_nz_bits(result);
 
     return result;
 }
@@ -68,8 +62,7 @@ pub fn sub(base: u8, operand: u8, register: &mut Register) -> u8 {
 pub fn xor(base: u8, operand: u8, register: &mut Register) -> u8 {
     let result = base ^ operand;
 
-    register.set_zero_bit(result == 0);
-    register.set_negative_bit(result > 127);
+    register.calculate_nz_bits(result);
 
     return result;
 }

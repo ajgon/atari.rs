@@ -151,6 +151,11 @@ impl Register {
     pub fn set_y(&mut self, value: u8) {
         self.y = value;
     }
+
+    pub fn calculate_nz_bits(&mut self, base: u8) {
+        self.set_zero_bit(base == 0);
+        self.set_negative_bit(base > 127);
+    }
 }
 
 #[cfg(test)]
