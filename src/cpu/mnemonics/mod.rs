@@ -29,6 +29,7 @@ mod jmp;
 mod jsr;
 mod lda;
 mod ldx;
+mod ldy;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -60,6 +61,7 @@ use jmp::Jmp;
 use jsr::Jsr;
 use lda::Lda;
 use ldx::Ldx;
+use ldy::Ldy;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -124,6 +126,7 @@ impl Mnemonics {
             0x20 => Box::new(Jsr::new(opcode)),
             0xA9 | 0xA5 | 0xB5 | 0xAD | 0xBD | 0xB9 | 0xA1 | 0xB1 => Box::new(Lda::new(opcode)),
             0xA2 | 0xA6 | 0xB6 | 0xAE | 0xBE => Box::new(Ldx::new(opcode)),
+            0xA0 | 0xA4 | 0xB4 | 0xAC | 0xBC => Box::new(Ldy::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
