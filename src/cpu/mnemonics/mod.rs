@@ -28,6 +28,7 @@ mod iny;
 mod jmp;
 mod jsr;
 mod lda;
+mod ldx;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -58,6 +59,7 @@ use iny::Iny;
 use jmp::Jmp;
 use jsr::Jsr;
 use lda::Lda;
+use ldx::Ldx;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -71,6 +73,7 @@ pub trait Mnemonic {
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8 { 0 }
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_zero_page_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
@@ -119,7 +122,8 @@ impl Mnemonics {
             0xC8 => Box::new(Iny::new(opcode)),
             0x4C | 0x6C => Box::new(Jmp::new(opcode)),
             0x20 => Box::new(Jsr::new(opcode)),
-            0xA9 | 0xA5 | 0xB5 | 0xAd | 0xBd | 0xB9 | 0xA1 | 0xB1 => Box::new(Lda::new(opcode)),
+            0xA9 | 0xA5 | 0xB5 | 0xAD | 0xBD | 0xB9 | 0xA1 | 0xB1 => Box::new(Lda::new(opcode)),
+            0xA2 | 0xA6 | 0xB6 | 0xAE | 0xBE => Box::new(Ldx::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
