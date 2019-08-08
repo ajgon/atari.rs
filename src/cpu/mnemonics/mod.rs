@@ -31,6 +31,7 @@ mod lda;
 mod ldx;
 mod ldy;
 mod lsr;
+mod nop;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -64,6 +65,7 @@ use lda::Lda;
 use ldx::Ldx;
 use ldy::Ldy;
 use lsr::Lsr;
+use nop::Nop;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -130,6 +132,7 @@ impl Mnemonics {
             0xA2 | 0xA6 | 0xB6 | 0xAE | 0xBE => Box::new(Ldx::new(opcode)),
             0xA0 | 0xA4 | 0xB4 | 0xAC | 0xBC => Box::new(Ldy::new(opcode)),
             0x4A | 0x46 | 0x56 | 0x4E | 0x5E => Box::new(Lsr::new(opcode)),
+            0xEA => Box::new(Nop::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
