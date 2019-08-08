@@ -25,6 +25,7 @@ mod eor;
 mod inc;
 mod inx;
 mod iny;
+mod jmp;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -52,6 +53,7 @@ use eor::Eor;
 use inc::Inc;
 use inx::Inx;
 use iny::Iny;
+use jmp::Jmp;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -68,6 +70,7 @@ pub trait Mnemonic {
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_absolute_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
+    fn call_indirect(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_indirect_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
     fn call_indirect_y(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 { 0 }
 }
@@ -110,6 +113,7 @@ impl Mnemonics {
             0xE6 | 0xF6 | 0xEE | 0xFE => Box::new(Inc::new(opcode)),
             0xE8 => Box::new(Inx::new(opcode)),
             0xC8 => Box::new(Iny::new(opcode)),
+            0x4C | 0x6C => Box::new(Jmp::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
