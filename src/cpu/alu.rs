@@ -40,6 +40,14 @@ pub fn increment(operand: u8, register: &mut Register) -> u8 {
     return result;
 }
 
+pub fn or(base: u8, operand: u8, register: &mut Register) -> u8 {
+    let result = base | operand;
+
+    register.calculate_nz_bits(result);
+
+    return result;
+}
+
 pub fn shift_left(operand: u8, register: &mut Register) -> u8 {
     let result = operand << 1;
 
@@ -207,6 +215,7 @@ mod tests {
     use super::and;
     use super::decrement;
     use super::increment;
+    use super::or;
     use super::shift_left;
     use super::shift_right;
     use super::sub;
@@ -490,6 +499,33 @@ mod tests {
         let result = decrement(0x00, &mut register);
 
         assert_eq!(result, 0xff);
+        assert_eq!(register.p(), 0b1011_0000);
+    }
+
+    #[test]
+    fn test_binary_or() {
+        let mut register = Register::new();
+        let result = or(0b0110_0111, 0b0010_1010, &mut register);
+
+        assert_eq!(result, 0b0110_1111);
+        assert_eq!(register.p(), 0b0011_0000);
+    }
+
+    #[test]
+    fn test_binary_or_with_zero() {
+        let mut register = Register::new();
+        let result = or(0b0000_0000, 0b0000_0000, &mut register);
+
+        assert_eq!(result, 0b0000_0000);
+        assert_eq!(register.p(), 0b0011_0010);
+    }
+
+    #[test]
+    fn test_binary_or_with_negative_result() {
+        let mut register = Register::new();
+        let result = or(0b0001_0101, 0b1010_1010, &mut register);
+
+        assert_eq!(result, 0b1011_1111);
         assert_eq!(register.p(), 0b1011_0000);
     }
 
