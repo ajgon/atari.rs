@@ -26,6 +26,7 @@ mod inc;
 mod inx;
 mod iny;
 mod jmp;
+mod jsr;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -54,6 +55,7 @@ use inc::Inc;
 use inx::Inx;
 use iny::Iny;
 use jmp::Jmp;
+use jsr::Jsr;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -114,6 +116,7 @@ impl Mnemonics {
             0xE8 => Box::new(Inx::new(opcode)),
             0xC8 => Box::new(Iny::new(opcode)),
             0x4C | 0x6C => Box::new(Jmp::new(opcode)),
+            0x20 => Box::new(Jsr::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }

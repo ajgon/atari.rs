@@ -25,11 +25,11 @@ impl Register {
     }
 
     pub fn increment_pc(&mut self) {
-        self.pc += 1;
+        self.pc = self.pc.overflowing_add(1).0;
     }
 
     pub fn increment_pc_by(&mut self, amount: u16) {
-        self.pc += amount;
+        self.pc = self.pc.overflowing_add(amount).0;
     }
 
     pub fn set_pc(&mut self, value: u16) {
@@ -41,11 +41,11 @@ impl Register {
     }
 
     pub fn push_s(&mut self) {
-        self.s -= 1;
+        self.s = self.s.overflowing_sub(1).0;
     }
 
     pub fn pull_s(&mut self) {
-        self.s += 1;
+        self.s = self.s.overflowing_add(1).0;
     }
 
     pub fn a(&self) -> u8 {
