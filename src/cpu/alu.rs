@@ -49,6 +49,15 @@ pub fn shift_left(operand: u8, register: &mut Register) -> u8 {
     return result;
 }
 
+pub fn shift_right(operand: u8, register: &mut Register) -> u8 {
+    let result = operand >> 1;
+
+    register.set_carry_bit(operand & 1 == 1);
+    register.calculate_nz_bits(result);
+
+    return result;
+}
+
 pub fn sub(base: u8, operand: u8, register: &mut Register) -> u8 {
     let (result, carry_bit) = calculate_subtraction_result_in_proper_math_mode(base, operand, register);
 
@@ -199,6 +208,7 @@ mod tests {
     use super::decrement;
     use super::increment;
     use super::shift_left;
+    use super::shift_right;
     use super::sub;
     use super::xor;
 
@@ -517,6 +527,44 @@ mod tests {
 
         assert_eq!(result, 0b1101_1000);
         assert_eq!(register.p(), 0b1011_0000);
+    }
+
+    #[test]
+    fn test_shift_right() {
+        let mut register = Register::new();
+        let result = shift_right(0b0010_1100, &mut register);
+
+        assert_eq!(result, 0b0001_0110);
+        assert_eq!(register.p(), 0b0011_0000);
+    }
+
+    #[test]
+    fn test_shift_right_with_carry() {
+        let mut register = Register::new();
+        let result = shift_right(0b1010_1101, &mut register);
+
+        assert_eq!(result, 0b0101_0110);
+        assert_eq!(register.p(), 0b0011_0001);
+    }
+
+    #[test]
+    fn test_shift_right_with_zero() {
+        let mut register = Register::new();
+        let result = shift_right(0b0000_0000, &mut register);
+
+        assert_eq!(result, 0b0000_0000);
+        assert_eq!(register.p(), 0b0011_0010);
+    }
+
+    #[test]
+    fn test_shift_right_with_negative_bit() {
+        let mut register = Register::new();
+        register.set_negative_bit(true);
+
+        let result = shift_right(0b0010_1100, &mut register);
+
+        assert_eq!(result, 0b0001_0110);
+        assert_eq!(register.p(), 0b0011_0000);
     }
 
     #[test]
