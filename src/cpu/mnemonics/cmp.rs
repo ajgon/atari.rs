@@ -65,7 +65,7 @@ impl Mnemonic for Cmp {
 
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8 {
         register.set_carry_bit(true);
-        alu::sub(register.a(), arguments[0], register);
+        alu::subtract(register.a(), arguments[0], register);
 
         return 2;
     }
@@ -74,7 +74,7 @@ impl Mnemonic for Cmp {
         let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
 
         register.set_carry_bit(true);
-        alu::sub(register.a(), memory_value, register);
+        alu::subtract(register.a(), memory_value, register);
 
         return 3;
     }
@@ -83,7 +83,7 @@ impl Mnemonic for Cmp {
         let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
 
         register.set_carry_bit(true);
-        alu::sub(register.a(), memory_value, register);
+        alu::subtract(register.a(), memory_value, register);
 
         return 4;
     }
@@ -92,7 +92,7 @@ impl Mnemonic for Cmp {
         let (_memory_address, memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
 
         register.set_carry_bit(true);
-        alu::sub(register.a(), memory_value, register);
+        alu::subtract(register.a(), memory_value, register);
 
         return 4;
     }
@@ -101,7 +101,7 @@ impl Mnemonic for Cmp {
         let (_memory_address, memory_value, boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
 
         register.set_carry_bit(true);
-        alu::sub(register.a(), memory_value, register);
+        alu::subtract(register.a(), memory_value, register);
 
         return if boundary_crossed { 5u8 } else { 4u8 };
     }
@@ -110,7 +110,7 @@ impl Mnemonic for Cmp {
         let (_memory_address, memory_value, boundary_crossed) = addressing::absolute_y(arguments, message_bus, register);
 
         register.set_carry_bit(true);
-        alu::sub(register.a(), memory_value, register);
+        alu::subtract(register.a(), memory_value, register);
 
         return if boundary_crossed { 5u8 } else { 4u8 };
     }
@@ -119,7 +119,7 @@ impl Mnemonic for Cmp {
         let (_memory_address, memory_value, _boundary_crossed) = addressing::indirect_x(arguments, message_bus, register);
 
         register.set_carry_bit(true);
-        alu::sub(register.a(), memory_value, register);
+        alu::subtract(register.a(), memory_value, register);
 
         return 6;
     }
@@ -128,7 +128,7 @@ impl Mnemonic for Cmp {
         let (_memory_address, memory_value, boundary_crossed) = addressing::indirect_y(arguments, message_bus, register);
 
         register.set_carry_bit(true);
-        alu::sub(register.a(), memory_value, register);
+        alu::subtract(register.a(), memory_value, register);
 
         return if boundary_crossed { 6u8 } else { 5u8 };
     }
