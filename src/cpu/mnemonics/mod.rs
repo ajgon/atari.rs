@@ -36,6 +36,7 @@ mod ora;
 mod pha;
 mod php;
 mod pla;
+mod plp;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -74,6 +75,7 @@ use ora::Ora;
 use pha::Pha;
 use php::Php;
 use pla::Pla;
+use plp::Plp;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -145,6 +147,7 @@ impl Mnemonics {
             0x48 => Box::new(Pha::new(opcode)),
             0x08 => Box::new(Php::new(opcode)),
             0x68 => Box::new(Pla::new(opcode)),
+            0x28 => Box::new(Plp::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }

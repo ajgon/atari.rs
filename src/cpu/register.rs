@@ -144,6 +144,10 @@ impl Register {
         }
     }
 
+    pub fn set_p(&mut self, value: u8) {
+        self.p = value | 0b0010_0000;
+    }
+
     pub fn set_x(&mut self, value: u8) {
         self.x = value;
     }
