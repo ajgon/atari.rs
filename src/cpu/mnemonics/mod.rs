@@ -40,6 +40,7 @@ mod plp;
 mod rol;
 mod ror;
 mod rti;
+mod rts;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -82,6 +83,7 @@ use plp::Plp;
 use rol::Rol;
 use ror::Ror;
 use rti::Rti;
+use rts::Rts;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -157,6 +159,7 @@ impl Mnemonics {
             0x2A | 0x26 | 0x36 | 0x2E | 0x3E => Box::new(Rol::new(opcode)),
             0x6A | 0x66 | 0x76 | 0x6E | 0x7E => Box::new(Ror::new(opcode)),
             0x40 => Box::new(Rti::new(opcode)),
+            0x60 => Box::new(Rts::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
