@@ -72,7 +72,7 @@ mod tests {
         let cycles = pla.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(0x42, register.a());
-        assert_eq!(0b0011_0000, register.p());
+        assert_eq!(0b0010_0000, register.p());
         assert_eq!(cycles, 4);
     }
 
@@ -90,7 +90,7 @@ mod tests {
         let cycles = pla.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(0x00, register.a());
-        assert_eq!(0b0011_0010, register.p());
+        assert_eq!(0b0010_0010, register.p());
         assert_eq!(cycles, 4);
     }
 
@@ -108,7 +108,7 @@ mod tests {
         let cycles = pla.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(0xF2, register.a());
-        assert_eq!(0b1011_0000, register.p());
+        assert_eq!(0b1010_0000, register.p());
         assert_eq!(cycles, 4);
     }
 

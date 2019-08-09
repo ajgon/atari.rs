@@ -159,7 +159,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -178,7 +178,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -198,7 +198,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -217,7 +217,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -238,7 +238,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -259,7 +259,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -280,7 +280,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -301,7 +301,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -323,7 +323,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -345,7 +345,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -367,7 +367,7 @@ mod tests {
         let cycles = and.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0000_0101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 

@@ -17,7 +17,7 @@ pub struct Register {
 
 impl Register {
     pub fn new() -> Register {
-        return Register { pc: 0x0600, s: 0xFF, a: 0x00, x: 0x00, y: 0x00, p: 0b0011_0000 };
+        return Register { pc: 0x0600, s: 0xFF, a: 0x00, x: 0x00, y: 0x00, p: 0b0010_0000 };
     }
 
     pub fn pc(&self) -> u16 {
@@ -178,7 +178,7 @@ mod tests {
         assert_eq!(register.a(), 0x00);
         assert_eq!(register.x(), 0x00);
         assert_eq!(register.y(), 0x00);
-        assert_eq!(register.p(), 0x30);
+        assert_eq!(register.p(), 0x20);
     }
 
     #[test]

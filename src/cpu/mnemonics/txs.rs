@@ -68,7 +68,7 @@ mod tests {
         let cycles = txs.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(register.s(), 0x42);
-        assert_eq!(0b0011_0000, register.p());
+        assert_eq!(0b0010_0000, register.p());
         assert_eq!(cycles, 2);
     }
 
@@ -84,7 +84,7 @@ mod tests {
         let cycles = txs.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(register.s(), 0x00);
-        assert_eq!(0b0011_0000, register.p());
+        assert_eq!(0b0010_0000, register.p());
         assert_eq!(cycles, 2);
     }
 
@@ -100,7 +100,7 @@ mod tests {
         let cycles = txs.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(register.s(), 0xF2);
-        assert_eq!(0b0011_0000, register.p());
+        assert_eq!(0b0010_0000, register.p());
         assert_eq!(cycles, 2);
     }
 

@@ -229,7 +229,7 @@ mod tests {
         let result = add(2, 3, &mut register);
 
         assert_eq!(result, 5);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -238,7 +238,7 @@ mod tests {
         let result = add(250, 250, &mut register);
 
         assert_eq!(result, 244);
-        assert_eq!(register.p(), 0b1011_0001);
+        assert_eq!(register.p(), 0b1010_0001);
     }
 
     #[test]
@@ -248,7 +248,7 @@ mod tests {
         let result = add(10, 31, &mut register);
 
         assert_eq!(result, 42);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -258,7 +258,7 @@ mod tests {
         let result = add(100, 200, &mut register);
 
         assert_eq!(result, 45);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
     }
 
     #[test]
@@ -268,7 +268,7 @@ mod tests {
         let result = add(100, 27, &mut register);
 
         assert_eq!(result, 128);
-        assert_eq!(register.p(), 0b1111_0000);
+        assert_eq!(register.p(), 0b1110_0000);
     }
 
     #[test]
@@ -278,7 +278,7 @@ mod tests {
         let result = add(127, 128, &mut register);
 
         assert_eq!(result, 0);
-        assert_eq!(register.p(), 0b0011_0011);
+        assert_eq!(register.p(), 0b0010_0011);
     }
 
     #[test]
@@ -287,7 +287,7 @@ mod tests {
         let result = add(64, 192, &mut register);
 
         assert_eq!(result, 0);
-        assert_eq!(register.p(), 0b0011_0011);
+        assert_eq!(register.p(), 0b0010_0011);
     }
 
     #[test]
@@ -296,7 +296,7 @@ mod tests {
         let result = add(128, 255, &mut register);
 
         assert_eq!(result, 127);
-        assert_eq!(register.p(), 0b0111_0001);
+        assert_eq!(register.p(), 0b0110_0001);
     }
 
     #[test]
@@ -306,7 +306,7 @@ mod tests {
         let result = add(0b0001_0101, 0b0010_0111, &mut register); // 15 and 27 in BCD
 
         assert_eq!(result, 0b0100_0010); // 42 in BCD
-        assert_eq!(register.p(), 0b0011_1000);
+        assert_eq!(register.p(), 0b0010_1000);
     }
 
     #[test]
@@ -317,7 +317,7 @@ mod tests {
         let result = add(0b0001_0101, 0b0010_0111, &mut register); // 15 and 27 in BCD
 
         assert_eq!(result, 0b0100_0011); // 43 in BCD
-        assert_eq!(register.p(), 0b0011_1000);
+        assert_eq!(register.p(), 0b0010_1000);
     }
 
     #[test]
@@ -327,7 +327,7 @@ mod tests {
         let result = add(0b0001_0101, 0b1000_0111, &mut register); // 15 and 87 in BCD
 
         assert_eq!(result, 0b0000_0010); // 2 in BCD
-        assert_eq!(register.p(), 0b0011_1001);
+        assert_eq!(register.p(), 0b0010_1001);
     }
 
     #[test]
@@ -337,7 +337,7 @@ mod tests {
         let result = add(0b0001_0101, 0b1000_0101, &mut register); // 15 and 85 in BCD
 
         assert_eq!(result, 0b0000_0000); // 2 in BCD
-        assert_eq!(register.p(), 0b0011_1011);
+        assert_eq!(register.p(), 0b0010_1011);
     }
 
     // Following tests are for V bit in BCD mode, taken from:
@@ -349,7 +349,7 @@ mod tests {
         let result = add(0b0010_0100, 0b0101_0110, &mut register); // 24 and 56 in BCD
 
         assert_eq!(result, 0b1000_0000); // 80 in BCD
-        assert_eq!(register.p(), 0b1111_1000);
+        assert_eq!(register.p(), 0b1110_1000);
     }
 
     #[test]
@@ -359,7 +359,7 @@ mod tests {
         let result = add(0b1001_0011, 0b1000_0010, &mut register); // 93 and 82 in BCD
 
         assert_eq!(result, 0b0111_0101); // 75 in BCD
-        assert_eq!(register.p(), 0b0111_1001);
+        assert_eq!(register.p(), 0b0110_1001);
     }
 
     #[test]
@@ -369,7 +369,7 @@ mod tests {
         let result = add(0b1000_1001, 0b0111_0110, &mut register); // 89 and 76 in BCD
 
         assert_eq!(result, 0b0110_0101); // 65 in BCD
-        assert_eq!(register.p(), 0b0011_1001);
+        assert_eq!(register.p(), 0b0010_1001);
     }
 
     #[test]
@@ -379,7 +379,7 @@ mod tests {
         let result = add(0b1000_0000, 0b1111_0000, &mut register); // 80 and invalid number in BCD
 
         assert_eq!(result, 0b1101_0000); // invalid result in BCD
-        assert_eq!(register.p(), 0b1111_1001);
+        assert_eq!(register.p(), 0b1110_1001);
     }
 
     #[test]
@@ -389,7 +389,7 @@ mod tests {
         let result = add(0b1000_0000, 0b1111_1010, &mut register); // 80 and invalid number in BCD
 
         assert_eq!(result, 0b1110_0000); // invalid result in BCD
-        assert_eq!(register.p(), 0b1011_1001);
+        assert_eq!(register.p(), 0b1010_1001);
     }
 
     #[test]
@@ -399,7 +399,7 @@ mod tests {
         let result = add(0b0010_1111, 0b0100_1111, &mut register); // two invalid numbers in BCD
 
         assert_eq!(result, 0b0111_0100); // invalid result in BCD
-        assert_eq!(register.p(), 0b0011_1000);
+        assert_eq!(register.p(), 0b0010_1000);
     }
 
     #[test]
@@ -409,7 +409,7 @@ mod tests {
         let result = add(0b0010_1111, 0b0010_1111, &mut register); // two invalid numbers in BCD
 
         assert_eq!(result, 0b0101_0100); // invalid result in BCD
-        assert_eq!(register.p(), 0b0011_1000);
+        assert_eq!(register.p(), 0b0010_1000);
     }
 
     #[test]
@@ -418,7 +418,7 @@ mod tests {
         let result = and(0b0110_0111, 0b1010_1010, &mut register);
 
         assert_eq!(result, 0b0010_0010);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -427,7 +427,7 @@ mod tests {
         let result = and(0b1111_0000, 0b0000_1111, &mut register);
 
         assert_eq!(result, 0b0000_0000);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
     }
 
     #[test]
@@ -436,7 +436,7 @@ mod tests {
         let result = and(0b1001_0101, 0b1010_1010, &mut register);
 
         assert_eq!(result, 0b1000_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -445,7 +445,7 @@ mod tests {
         let result = increment(0x41, &mut register);
 
         assert_eq!(result, 0x42);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -454,7 +454,7 @@ mod tests {
         let result = increment(0xFF, &mut register);
 
         assert_eq!(result, 0x00);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
     }
 
     #[test]
@@ -463,7 +463,7 @@ mod tests {
         let result = increment(0x81, &mut register);
 
         assert_eq!(result, 0x82);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -472,7 +472,7 @@ mod tests {
         let result = decrement(0x43, &mut register);
 
         assert_eq!(result, 0x42);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -481,7 +481,7 @@ mod tests {
         let result = decrement(0x01, &mut register);
 
         assert_eq!(result, 0x00);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
     }
 
     #[test]
@@ -490,7 +490,7 @@ mod tests {
         let result = decrement(0x83, &mut register);
 
         assert_eq!(result, 0x82);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -499,7 +499,7 @@ mod tests {
         let result = decrement(0x00, &mut register);
 
         assert_eq!(result, 0xff);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -508,7 +508,7 @@ mod tests {
         let result = or(0b0110_0111, 0b0010_1010, &mut register);
 
         assert_eq!(result, 0b0110_1111);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -517,7 +517,7 @@ mod tests {
         let result = or(0b0000_0000, 0b0000_0000, &mut register);
 
         assert_eq!(result, 0b0000_0000);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
     }
 
     #[test]
@@ -526,7 +526,7 @@ mod tests {
         let result = or(0b0001_0101, 0b1010_1010, &mut register);
 
         assert_eq!(result, 0b1011_1111);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -535,7 +535,7 @@ mod tests {
         let result = shift_left(0b0010_1100, &mut register);
 
         assert_eq!(result, 0b0101_1000);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -544,7 +544,7 @@ mod tests {
         let result = shift_left(0b1010_1100, &mut register);
 
         assert_eq!(result, 0b0101_1000);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
     }
 
     #[test]
@@ -553,7 +553,7 @@ mod tests {
         let result = shift_left(0b0000_0000, &mut register);
 
         assert_eq!(result, 0b0000_0000);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
     }
 
     #[test]
@@ -562,7 +562,7 @@ mod tests {
         let result = shift_left(0b0110_1100, &mut register);
 
         assert_eq!(result, 0b1101_1000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -571,7 +571,7 @@ mod tests {
         let result = shift_right(0b0010_1100, &mut register);
 
         assert_eq!(result, 0b0001_0110);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -580,7 +580,7 @@ mod tests {
         let result = shift_right(0b1010_1101, &mut register);
 
         assert_eq!(result, 0b0101_0110);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
     }
 
     #[test]
@@ -589,7 +589,7 @@ mod tests {
         let result = shift_right(0b0000_0000, &mut register);
 
         assert_eq!(result, 0b0000_0000);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
     }
 
     #[test]
@@ -600,7 +600,7 @@ mod tests {
         let result = shift_right(0b0010_1100, &mut register);
 
         assert_eq!(result, 0b0001_0110);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -610,7 +610,7 @@ mod tests {
         let result = subtract(100, 31, &mut register);
 
         assert_eq!(result, 69);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
     }
 
     #[test]
@@ -620,7 +620,7 @@ mod tests {
         let result = subtract(100, 120, &mut register);
 
         assert_eq!(result, 236);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -629,7 +629,7 @@ mod tests {
         let result = subtract(100, 31, &mut register);
 
         assert_eq!(result, 68);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
     }
 
     #[test]
@@ -638,7 +638,7 @@ mod tests {
         let result = subtract(100, 120, &mut register);
 
         assert_eq!(result, 235);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -648,7 +648,7 @@ mod tests {
         let result = subtract(0, 1, &mut register);
 
         assert_eq!(result, 255);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 
     #[test]
@@ -658,7 +658,7 @@ mod tests {
         let result = subtract(128, 1, &mut register);
 
         assert_eq!(result, 127);
-        assert_eq!(register.p(), 0b0111_0001);
+        assert_eq!(register.p(), 0b0110_0001);
     }
 
     #[test]
@@ -668,7 +668,7 @@ mod tests {
         let result = subtract(127, 255, &mut register);
 
         assert_eq!(result, 128);
-        assert_eq!(register.p(), 0b1111_0000);
+        assert_eq!(register.p(), 0b1110_0000);
     }
 
     #[test]
@@ -677,7 +677,7 @@ mod tests {
         let result = subtract(192, 64, &mut register);
 
         assert_eq!(result, 127);
-        assert_eq!(register.p(), 0b0111_0001);
+        assert_eq!(register.p(), 0b0110_0001);
     }
 
     #[test]
@@ -687,7 +687,7 @@ mod tests {
         let result = subtract(50, 50, &mut register);
 
         assert_eq!(result, 0);
-        assert_eq!(register.p(), 0b0011_0011);
+        assert_eq!(register.p(), 0b0010_0011);
     }
 
     #[test]
@@ -696,7 +696,7 @@ mod tests {
         let result = subtract(150, 149, &mut register);
 
         assert_eq!(result, 0);
-        assert_eq!(register.p(), 0b0011_0011);
+        assert_eq!(register.p(), 0b0010_0011);
     }
 
     #[test]
@@ -707,7 +707,7 @@ mod tests {
         let result = subtract(0b0101_0000, 0b0001_0101, &mut register); // 50 and 15 in BCD
 
         assert_eq!(result, 0b0011_0101); // 35 in BCD
-        assert_eq!(register.p(), 0b0011_1001);
+        assert_eq!(register.p(), 0b0010_1001);
     }
 
     #[test]
@@ -718,7 +718,7 @@ mod tests {
         let result = subtract(0b0001_0101, 0b0101_0000, &mut register); // 15 and 50 in BCD
 
         assert_eq!(result, 0b0110_0101); // 65 in BCD (wraparound)
-        assert_eq!(register.p(), 0b0011_1000);
+        assert_eq!(register.p(), 0b0010_1000);
     }
 
     #[test]
@@ -729,7 +729,7 @@ mod tests {
         let result = subtract(0b0101_0000, 0b0101_0000, &mut register); // 50 and 50 in BCD
 
         assert_eq!(result, 0b0000_0000); // 0 in BCD
-        assert_eq!(register.p(), 0b0011_1011);
+        assert_eq!(register.p(), 0b0010_1011);
     }
 
     #[test]
@@ -740,7 +740,7 @@ mod tests {
         let result = subtract(0b1001_0101, 0b0000_0010, &mut register); // 95 and 2 in BCD
 
         assert_eq!(result, 0b1001_0011); // 93 in BCD
-        assert_eq!(register.p(), 0b1011_1001);
+        assert_eq!(register.p(), 0b1010_1001);
     }
 
     #[test]
@@ -751,7 +751,7 @@ mod tests {
         let result = subtract(0b1000_0000, 0b0000_0001, &mut register); // 80 and 1 in BCD
 
         assert_eq!(result, 0b0111_1001); // 79 in BCD
-        assert_eq!(register.p(), 0b0111_1001);
+        assert_eq!(register.p(), 0b0110_1001);
     }
 
     #[test]
@@ -761,7 +761,7 @@ mod tests {
         let result = subtract(0b0101_0000, 0b0001_0101, &mut register); // 50 and 15 in BCD
 
         assert_eq!(result, 0b0011_0100); // 34 in BCD
-        assert_eq!(register.p(), 0b0011_1001);
+        assert_eq!(register.p(), 0b0010_1001);
     }
 
     #[test]
@@ -771,7 +771,7 @@ mod tests {
         let result = subtract(0b0001_0101, 0b0101_0000, &mut register); // 15 and 50 in BCD
 
         assert_eq!(result, 0b0110_0100); // 64 in BCD (wraparound)
-        assert_eq!(register.p(), 0b0011_1000);
+        assert_eq!(register.p(), 0b0010_1000);
     }
 
     #[test]
@@ -781,7 +781,7 @@ mod tests {
         let result = subtract(0b0101_0000, 0b0100_1001, &mut register); // 50 and 49 in BCD
 
         assert_eq!(result, 0b0000_0000); // 0 in BCD
-        assert_eq!(register.p(), 0b0011_1011);
+        assert_eq!(register.p(), 0b0010_1011);
     }
 
     #[test]
@@ -790,7 +790,7 @@ mod tests {
         let result = xor(0b0110_0111, 0b0010_1010, &mut register);
 
         assert_eq!(result, 0b0100_1101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
     }
 
     #[test]
@@ -799,7 +799,7 @@ mod tests {
         let result = xor(0b0000_1111, 0b0000_1111, &mut register);
 
         assert_eq!(result, 0b0000_0000);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
     }
 
     #[test]
@@ -808,6 +808,6 @@ mod tests {
         let result = xor(0b0001_0101, 0b1010_1010, &mut register);
 
         assert_eq!(result, 0b1011_1111);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
     }
 }

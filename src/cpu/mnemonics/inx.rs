@@ -70,7 +70,7 @@ mod tests {
         let cycles = inx.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(0x00, register.x());
-        assert_eq!(0b0011_0010, register.p());
+        assert_eq!(0b0010_0010, register.p());
         assert_eq!(cycles, 2);
     }
 

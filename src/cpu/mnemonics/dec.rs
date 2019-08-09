@@ -120,7 +120,7 @@ mod tests {
         let cycles = dec.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x30), 0xCB);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -139,7 +139,7 @@ mod tests {
         let cycles = dec.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0xCB);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -157,7 +157,7 @@ mod tests {
         let cycles = dec.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a3c), 0xCB);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -177,7 +177,7 @@ mod tests {
         let cycles = dec.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a4c), 0xCB);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 7);
     }
 

@@ -153,7 +153,7 @@ mod tests {
         let cycles = sta.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x30), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -171,7 +171,7 @@ mod tests {
         let cycles = sta.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -188,7 +188,7 @@ mod tests {
         let cycles = sta.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a3c), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -207,7 +207,7 @@ mod tests {
         let cycles = sta.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a4c), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -226,7 +226,7 @@ mod tests {
         let cycles = sta.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a4c), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -247,7 +247,7 @@ mod tests {
         let cycles = sta.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x105), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -268,7 +268,7 @@ mod tests {
         let cycles = sta.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x0109), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 

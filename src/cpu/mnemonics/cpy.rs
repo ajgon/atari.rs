@@ -107,7 +107,7 @@ mod tests {
 
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.y(), 0x42);
-        assert_eq!(register.p(), 0b00110011);
+        assert_eq!(register.p(), 0b0010_0011);
         assert_eq!(cycles, 2);
     }
 
@@ -126,7 +126,7 @@ mod tests {
 
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.y(), 0x42);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -145,7 +145,7 @@ mod tests {
 
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.y(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -164,7 +164,7 @@ mod tests {
 
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.y(), 0x42);
-        assert_eq!(register.p(), 0b00110001);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 2);
     }
 
@@ -183,7 +183,7 @@ mod tests {
 
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.y(), 0xF2);
-        assert_eq!(register.p(), 0b00110001);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 2);
     }
 
@@ -204,7 +204,7 @@ mod tests {
 
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.y(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -225,7 +225,7 @@ mod tests {
 
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.y(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 

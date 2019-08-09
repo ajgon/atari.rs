@@ -116,7 +116,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -131,7 +131,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 2);
     }
 
@@ -146,7 +146,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0xF2);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -163,7 +163,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -180,7 +180,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 3);
     }
 
@@ -197,7 +197,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -216,7 +216,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -235,7 +235,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 
@@ -254,7 +254,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -271,7 +271,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -288,7 +288,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 
@@ -305,7 +305,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -325,7 +325,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -345,7 +345,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 
@@ -365,7 +365,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -385,7 +385,7 @@ mod tests {
         let cycles = ldx.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 

@@ -75,7 +75,7 @@ mod tests {
         assert_eq!(memory.read_byte(0x1ff), 0x06);
         assert_eq!(memory.read_byte(0x1fe), 0x02);
         assert_eq!(register.pc(), 0x0650);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 

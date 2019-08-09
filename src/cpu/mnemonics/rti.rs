@@ -68,7 +68,7 @@ mod tests {
         let mut memory = Memory::new();
         memory.write_byte(0x01FF, 0x06);
         memory.write_byte(0x01FE, 0x55);
-        memory.write_byte(0x01FD, 0b1011_0011);
+        memory.write_byte(0x01FD, 0b1010_0011);
 
         let mut register = Register::new();
         register.push_s();

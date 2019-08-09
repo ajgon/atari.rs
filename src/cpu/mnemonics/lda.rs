@@ -152,7 +152,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -167,7 +167,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 2);
     }
 
@@ -182,7 +182,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF2);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -199,7 +199,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -216,7 +216,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 3);
     }
 
@@ -233,7 +233,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -252,7 +252,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -271,7 +271,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 
@@ -290,7 +290,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -307,7 +307,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -324,7 +324,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 
@@ -341,7 +341,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -361,7 +361,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -381,7 +381,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 
@@ -401,7 +401,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -421,7 +421,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -441,7 +441,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -461,7 +461,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 
@@ -481,7 +481,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -501,7 +501,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -522,7 +522,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -543,7 +543,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 6);
     }
 
@@ -564,7 +564,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -585,7 +585,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -606,7 +606,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b00110010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 5);
     }
 
@@ -627,7 +627,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0xF0);
-        assert_eq!(register.p(), 0b10110000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -648,7 +648,7 @@ mod tests {
         let cycles = lda.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x42);
-        assert_eq!(register.p(), 0b00110000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 

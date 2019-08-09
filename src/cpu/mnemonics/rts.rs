@@ -74,7 +74,7 @@ mod tests {
 
         let cycles = rts.call(vec![0x00], &mut register, &mut message_bus);
 
-        assert_eq!(0b0011_0000, register.p());
+        assert_eq!(0b0010_0000, register.p());
         assert_eq!(0x0656, register.pc());
         assert_eq!(cycles, 6);
     }

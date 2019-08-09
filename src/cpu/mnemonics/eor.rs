@@ -155,7 +155,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -174,7 +174,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -194,7 +194,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -213,7 +213,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -234,7 +234,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -255,7 +255,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -276,7 +276,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -297,7 +297,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -319,7 +319,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -341,7 +341,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -363,7 +363,7 @@ mod tests {
         let cycles = eor.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1111_0000);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 6);
     }
 

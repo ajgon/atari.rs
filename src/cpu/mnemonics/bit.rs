@@ -91,7 +91,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -110,7 +110,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -129,7 +129,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b0111_0000);
+        assert_eq!(register.p(), 0b0110_0000);
         assert_eq!(cycles, 3);
     }
 
@@ -148,7 +148,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 3);
     }
 
@@ -167,7 +167,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -186,7 +186,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -205,7 +205,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b0111_0000);
+        assert_eq!(register.p(), 0b0110_0000);
         assert_eq!(cycles, 4);
     }
 
@@ -224,7 +224,7 @@ mod tests {
         let cycles = bit.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0001_0001);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 4);
     }
 

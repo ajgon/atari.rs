@@ -140,7 +140,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -158,7 +158,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -175,7 +175,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 2);
     }
 
@@ -190,7 +190,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 2);
     }
 
@@ -207,7 +207,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0b1000_0010);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 2);
     }
 
@@ -225,7 +225,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -244,7 +244,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0b0101_1101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -261,7 +261,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 5);
     }
 
@@ -276,7 +276,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0x00);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 5);
     }
 
@@ -292,7 +292,7 @@ mod tests {
 
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
         assert_eq!(memory.read_byte(0x35), 0b1000_0010);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 5);
     }
 
@@ -311,7 +311,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -331,7 +331,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0b0101_1101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -350,7 +350,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 6);
     }
 
@@ -367,7 +367,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x35), 0x00);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 6);
     }
 
@@ -385,7 +385,7 @@ mod tests {
 
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
         assert_eq!(memory.read_byte(0x35), 0b1000_0010);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -403,7 +403,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -422,7 +422,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0b0101_1101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -439,7 +439,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 6);
     }
 
@@ -454,7 +454,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0x00);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 6);
     }
 
@@ -470,7 +470,7 @@ mod tests {
 
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
         assert_eq!(memory.read_byte(0x5a35), 0b1000_0010);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 6);
     }
 
@@ -489,7 +489,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 7);
     }
 
@@ -509,7 +509,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0b0101_1101);
-        assert_eq!(register.p(), 0b0011_0000);
+        assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 7);
     }
 
@@ -528,7 +528,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0b0101_1100);
-        assert_eq!(register.p(), 0b0011_0001);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 7);
     }
 
@@ -545,7 +545,7 @@ mod tests {
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(memory.read_byte(0x5a35), 0x00);
-        assert_eq!(register.p(), 0b0011_0010);
+        assert_eq!(register.p(), 0b0010_0010);
         assert_eq!(cycles, 7);
     }
 
@@ -563,7 +563,7 @@ mod tests {
 
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
         assert_eq!(memory.read_byte(0x5a35), 0b1000_0010);
-        assert_eq!(register.p(), 0b1011_0000);
+        assert_eq!(register.p(), 0b1010_0000);
         assert_eq!(cycles, 7);
     }
 

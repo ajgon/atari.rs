@@ -70,7 +70,7 @@ mod tests {
         let cycles = dex.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(0xFF, register.x());
-        assert_eq!(0b1011_0000, register.p());
+        assert_eq!(0b1010_0000, register.p());
         assert_eq!(cycles, 2);
     }
 

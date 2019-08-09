@@ -69,7 +69,7 @@ mod tests {
         let cycles = tax.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x42);
-        assert_eq!(0b0011_0000, register.p());
+        assert_eq!(0b0010_0000, register.p());
         assert_eq!(cycles, 2);
     }
 
@@ -85,7 +85,7 @@ mod tests {
         let cycles = tax.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0x00);
-        assert_eq!(0b0011_0010, register.p());
+        assert_eq!(0b0010_0010, register.p());
         assert_eq!(cycles, 2);
     }
 
@@ -101,7 +101,7 @@ mod tests {
         let cycles = tax.call(vec![0x00], &mut register, &mut message_bus);
 
         assert_eq!(register.x(), 0xF2);
-        assert_eq!(0b1011_0000, register.p());
+        assert_eq!(0b1010_0000, register.p());
         assert_eq!(cycles, 2);
     }
 

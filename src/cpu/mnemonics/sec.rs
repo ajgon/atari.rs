@@ -64,7 +64,7 @@ mod tests {
 
         let cycles = sec.call(vec![0x00], &mut register, &mut message_bus);
 
-        assert_eq!(0b0011_0001, register.p());
+        assert_eq!(0b0010_0001, register.p());
         assert_eq!(cycles, 2);
     }
 
