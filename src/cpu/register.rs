@@ -48,6 +48,10 @@ impl Register {
         self.s = self.s.overflowing_add(1).0;
     }
 
+    pub fn set_s(&mut self, value: u8) {
+        self.s = value;
+    }
+
     pub fn a(&self) -> u8 {
         return self.a;
     }
