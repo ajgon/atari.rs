@@ -10,7 +10,7 @@ fn main() {
     let mut cpu = cpu::Cpu::new(&mut message_bus);
 
     let mut atari = Atari::new(&mut cpu);
-    atari.testme();
+    atari.start();
     //atari.load_into_memory("\x69\x2A\x69\x45");
 
     //println!("{:?}", motherboard());

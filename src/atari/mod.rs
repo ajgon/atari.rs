@@ -13,10 +13,10 @@ impl<'a> Atari<'a> {
         };
     }
 
-    pub fn testme(&mut self) {
-        self.cpu.process_byte(0x65);
-        self.cpu.process_byte(0x2A);
+    pub fn start(&mut self) {
+        self.cpu.cold_reset();
     }
+
     //pub fn load_into_memory(&mut self, data: &str) {
         //for (i, byte) in data.bytes().enumerate() {
             //self.memory.write_byte(i, byte);
