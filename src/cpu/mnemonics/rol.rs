@@ -62,6 +62,7 @@ impl Mnemonic for Rol {
         let result = alu::shift_left(register.a(), register);
         let result = if previous_carry_bit { result | 0x01 } else { result & 0xFE };
         register.set_accumulator(result);
+        register.calculate_nz_bits(result);
 
         return 2;
     }
@@ -75,6 +76,7 @@ impl Mnemonic for Rol {
         message_bus.send_message(
             MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
         );
+        register.calculate_nz_bits(result);
 
         return 5;
     }
@@ -88,6 +90,7 @@ impl Mnemonic for Rol {
         message_bus.send_message(
             MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
         );
+        register.calculate_nz_bits(result);
 
         return 6;
     }
@@ -101,6 +104,7 @@ impl Mnemonic for Rol {
         message_bus.send_message(
             MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
         );
+        register.calculate_nz_bits(result);
 
         return 6;
     }
@@ -114,6 +118,7 @@ impl Mnemonic for Rol {
         message_bus.send_message(
             MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
         );
+        register.calculate_nz_bits(result);
 
         return 7;
     }
@@ -186,11 +191,12 @@ mod tests {
         let mut memory = Memory::new();
         let mut register = Register::new();
         let mut message_bus = MessageBus::new(&mut memory);
+        register.set_accumulator(0b1000_0000);
 
         let cycles = rol.call(arguments, &mut register, &mut message_bus);
 
         assert_eq!(register.a(), 0x00);
-        assert_eq!(register.p(), 0b0010_0010);
+        assert_eq!(register.p(), 0b0010_0011);
         assert_eq!(cycles, 2);
     }
 

@@ -16,6 +16,8 @@ use crate::cpu::addressing;
 use crate::cpu::mnemonics::Mnemonic;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
+use crate::message_bus::MessageBusTarget;
+use crate::message_bus::MessageBusMessage;
 use crate::cpu::alu;
 
 #[derive(Debug)]
@@ -61,37 +63,45 @@ impl Mnemonic for Lsr {
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
+        let (memory_address, memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
 
         let result = alu::shift_right(memory_value, register);
-        register.set_accumulator(result);
+        message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
+        );
 
         return 5;
     }
 
     fn call_zero_page_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
+        let (memory_address, memory_value, _boundary_crossed) = addressing::zero_page_x(arguments, message_bus, register);
 
         let result = alu::shift_right(memory_value, register);
-        register.set_accumulator(result);
+        message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
+        );
 
         return 6;
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (_memory_address, memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
+        let (memory_address, memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
 
         let result = alu::shift_right(memory_value, register);
-        register.set_accumulator(result);
+        message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
+        );
 
         return 6;
     }
 
     fn call_absolute_x(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
-        let (_memory_address, memory_value, _boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
+        let (memory_address, memory_value, _boundary_crossed) = addressing::absolute_x(arguments, message_bus, register);
 
         let result = alu::shift_right(memory_value, register);
-        register.set_accumulator(result);
+        message_bus.send_message(
+            MessageBusTarget::Memory, MessageBusMessage::Write, vec![memory_address, result as u16]
+        );
 
         return 7;
     }
@@ -134,7 +144,7 @@ mod tests {
 
         let cycles = lsr.call(arguments, &mut register, &mut message_bus);
 
-        assert_eq!(register.a(), 0b0001_0110);
+        assert_eq!(memory.read_byte(0x30), 0b0001_0110);
         assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 5);
     }
@@ -153,7 +163,7 @@ mod tests {
 
         let cycles = lsr.call(arguments, &mut register, &mut message_bus);
 
-        assert_eq!(register.a(), 0b0001_0110);
+        assert_eq!(memory.read_byte(0x35), 0b0001_0110);
         assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
@@ -171,7 +181,7 @@ mod tests {
 
         let cycles = lsr.call(arguments, &mut register, &mut message_bus);
 
-        assert_eq!(register.a(), 0b0001_0110);
+        assert_eq!(memory.read_byte(0x5a3c), 0b0001_0110);
         assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);
     }
@@ -191,7 +201,7 @@ mod tests {
 
         let cycles = lsr.call(arguments, &mut register, &mut message_bus);
 
-        assert_eq!(register.a(), 0b0001_0110);
+        assert_eq!(memory.read_byte(0x5a4c), 0b0001_0110);
         assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 7);
     }

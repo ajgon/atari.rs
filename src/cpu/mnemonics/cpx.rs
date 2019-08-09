@@ -49,36 +49,42 @@ impl Mnemonic for Cpx {
     }
 
     fn call_immidiate(&self, arguments: Vec<u8>, register: &mut Register) -> u8 {
-        let accumulator_value = register.a();
+        let decimal_bit = register.decimal_bit();
+        let overflow_bit = register.overflow_bit();
 
-        register.set_accumulator(register.x());
         register.set_carry_bit(true);
-        alu::subtract(register.a(), arguments[0], register);
-        register.set_accumulator(accumulator_value);
+        register.set_decimal_bit(false);
+        alu::subtract(register.x(), arguments[0], register);
+        register.set_decimal_bit(decimal_bit);
+        register.set_overflow_bit(overflow_bit);
 
         return 2;
     }
 
     fn call_zero_page(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (_memory_address, memory_value, _boundary_crossed) = addressing::zero_page(arguments, message_bus);
-        let accumulator_value = register.a();
+        let decimal_bit = register.decimal_bit();
+        let overflow_bit = register.overflow_bit();
 
-        register.set_accumulator(register.x());
         register.set_carry_bit(true);
-        alu::subtract(register.a(), memory_value, register);
-        register.set_accumulator(accumulator_value);
+        register.set_decimal_bit(false);
+        alu::subtract(register.x(), memory_value, register);
+        register.set_decimal_bit(decimal_bit);
+        register.set_overflow_bit(overflow_bit);
 
         return 3;
     }
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (_memory_address, memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
-        let accumulator_value = register.a();
+        let decimal_bit = register.decimal_bit();
+        let overflow_bit = register.overflow_bit();
 
-        register.set_accumulator(register.x());
         register.set_carry_bit(true);
-        alu::subtract(register.a(), memory_value, register);
-        register.set_accumulator(accumulator_value);
+        register.set_decimal_bit(false);
+        alu::subtract(register.x(), memory_value, register);
+        register.set_decimal_bit(decimal_bit);
+        register.set_overflow_bit(overflow_bit);
 
         return 4;
     }
@@ -146,6 +152,45 @@ mod tests {
         assert_eq!(register.a(), 0x99);
         assert_eq!(register.x(), 0x42);
         assert_eq!(register.p(), 0b0010_0000);
+        assert_eq!(cycles, 2);
+    }
+
+    #[test]
+    fn test_immidiate_bcd_math_no_affect() {
+        let cpx = Cpx::new(0xE0);
+        let arguments = vec![0xF2];
+        let mut memory = Memory::new();
+        let mut register = Register::new();
+        register.set_accumulator(0x99);
+        register.set_x(0x42);
+        register.set_decimal_bit(true);
+
+        let mut message_bus = MessageBus::new(&mut memory);
+
+        let cycles = cpx.call(arguments, &mut register, &mut message_bus);
+
+        assert_eq!(register.a(), 0x99);
+        assert_eq!(register.x(), 0x42);
+        assert_eq!(register.p(), 0b0010_1000);
+        assert_eq!(cycles, 2);
+    }
+
+    #[test]
+    fn test_immidiate_overflow_no_affect() {
+        let cpx = Cpx::new(0xE0);
+        let arguments = vec![0x01];
+        let mut memory = Memory::new();
+        let mut register = Register::new();
+        register.set_accumulator(0x99);
+        register.set_x(0x80);
+
+        let mut message_bus = MessageBus::new(&mut memory);
+
+        let cycles = cpx.call(arguments, &mut register, &mut message_bus);
+
+        assert_eq!(register.a(), 0x99);
+        assert_eq!(register.x(), 0x80);
+        assert_eq!(register.p(), 0b0010_0001);
         assert_eq!(cycles, 2);
     }
 

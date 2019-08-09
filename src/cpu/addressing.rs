@@ -64,7 +64,7 @@ pub fn absolute_y(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &R
 }
 
 pub fn indirect_x(arguments: Vec<u8>, message_bus: &mut MessageBus, register: &Register) -> (u16, u8, bool) {
-    let memory_address: u16 = (arguments[0] as u16).overflowing_add(register.x() as u16).0;
+    let memory_address: u16 = (arguments[0].overflowing_add(register.x()).0) as u16;
     let memory_value = message_bus.send_message(
         MessageBusTarget::Memory, MessageBusMessage::Read, vec![memory_address]
     );

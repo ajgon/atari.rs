@@ -44,7 +44,7 @@ impl Mnemonic for Jsr {
 
     fn call_absolute(&self, arguments: Vec<u8>, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
         let (memory_address, _memory_value, _boundary_crossed) = addressing::absolute(arguments, message_bus);
-        register.increment_pc_by(2);
+        register.set_pc(register.pc() - 1);
         addressing::stack_push(((register.pc() & 0xFF00) >> 8) as u8, message_bus, register);
         addressing::stack_push((register.pc() & 0x00FF) as u8, message_bus, register);
 
@@ -72,8 +72,8 @@ mod tests {
 
         let cycles = jsr.call(arguments, &mut register, &mut message_bus);
 
-        assert_eq!(memory.read_byte(0x1ff), 0x06);
-        assert_eq!(memory.read_byte(0x1fe), 0x02);
+        assert_eq!(memory.read_byte(0x1ff), 0x05);
+        assert_eq!(memory.read_byte(0x1fe), 0xff);
         assert_eq!(register.pc(), 0x0650);
         assert_eq!(register.p(), 0b0010_0000);
         assert_eq!(cycles, 6);

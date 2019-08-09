@@ -1,12 +1,12 @@
 /*
-PHA  Clear Carry Flag
+PHA  Push Accumulator on Stack
 
-     0 -> C                           N Z C I D V
-                                      - - 0 - - -
+     push A                           N Z C I D V
+                                      - - - - - -
 
      addressing    assembler    opc  bytes  cyles
      --------------------------------------------
-     implied       PHA           18    1     2
+     implied       PHA           48    1     3
 */
 
 use crate::cpu::addressing;

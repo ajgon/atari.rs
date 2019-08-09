@@ -44,8 +44,10 @@ impl Mnemonic for Brk {
     }
 
     fn call_implied(&self, register: &mut Register, message_bus: &mut MessageBus) -> u8 {
+        register.increment_pc();
         addressing::stack_push((register.pc() >> 8) as u8, message_bus, register);
         addressing::stack_push((register.pc() & 0x00FF) as u8, message_bus, register);
+
         register.set_break_bit(true);
         addressing::stack_push(register.p(), message_bus, register);
         let pc_low = message_bus.send_message(
@@ -56,7 +58,6 @@ impl Mnemonic for Brk {
         );
         register.set_pc(((pc_high as u16) << 8) + pc_low as u16);
         register.set_interrupt_bit(true);
-        register.increment_pc();
 
         return 7;
     }
@@ -83,11 +84,11 @@ mod tests {
 
         let cycles = brk.call(vec![0x00], &mut register, &mut message_bus);
 
-        assert_eq!(register.pc(), 0x0421);
+        assert_eq!(register.pc(), 0x0420);
         assert_eq!(register.p(), 0b0011_0100);
         assert_eq!(register.s(), 0xfc);
         assert_eq!(memory.read_byte(0x1ff), 0x03);
-        assert_eq!(memory.read_byte(0x1fe), 0x05);
+        assert_eq!(memory.read_byte(0x1fe), 0x06);
         assert_eq!(cycles, 7);
     }
 

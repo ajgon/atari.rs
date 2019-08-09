@@ -7,7 +7,10 @@ use std::io::prelude::*;
 use std::fs::File;
 
 fn main() {
-    let mut file = File::open("examples/tolower.mem").unwrap();
+    //let mut file = File::open("examples/tolower.mem").unwrap();
+    //let mut file = File::open("examples/atarixl.mem").unwrap();
+    //let mut file = File::open("examples/atarixl-and-basic-revc.mem").unwrap();
+    let mut file = File::open("examples/test.mem").unwrap();
     let mut buffer = Vec::new();
     file.read_to_end(&mut buffer);
 

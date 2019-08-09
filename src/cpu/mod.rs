@@ -12,7 +12,7 @@ pub struct Cpu<'a> {
     message_bus: &'a mut MessageBus<'a>,
     register: register::Register,
     mnemonics: Mnemonics,
-    cycles: u64
+    pub cycles: u64
 }
 
 impl<'a> Cpu<'a> {
@@ -45,16 +45,9 @@ impl<'a> Cpu<'a> {
     }
 
     pub fn step(&mut self) -> bool {
+        let pc_start = self.register.pc();
         let opcode = self.read_byte();
-
-        // @todo this goes away, it's for debug now
-        if opcode == 0 {
-            return false; // signal for atari to stop working
-        }
-
         let mnemonic = self.mnemonics.resolve_mnemonic_from_opcode(opcode);
-
-        //println!("${:x}: {:x}", self.register.pc() - 1 + 0x17, opcode);
         let mnemonic_length = mnemonic.determine_bytes();
         let mut mnemonic_data: Vec<u8> = Vec::new();
 

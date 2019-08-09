@@ -42,7 +42,7 @@ impl Mnemonic for Php {
     }
 
     fn call_implied(&self, register: &mut Register, _message_bus: &mut MessageBus) -> u8 {
-        addressing::stack_push(register.p(), _message_bus, register);
+        addressing::stack_push(register.p() | 0x30, _message_bus, register);
         return 3;
     }
 }
@@ -65,7 +65,7 @@ mod tests {
 
         let cycles = php.call(vec![0x00], &mut register, &mut message_bus);
 
-        assert_eq!(memory.read_byte(0x01ff), 0x20);
+        assert_eq!(memory.read_byte(0x01ff), 0x30);
         assert_eq!(0b0010_0000, register.p());
         assert_eq!(cycles, 3);
     }

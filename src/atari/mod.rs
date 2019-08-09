@@ -1,5 +1,6 @@
 use super::cpu::Cpu;
 //use super::memory::Memory;
+use std::time::{Duration, Instant};
 
 #[derive(Debug)]
 pub struct Atari<'a> {
@@ -18,17 +19,17 @@ impl<'a> Atari<'a> {
     }
 
     pub fn work(&mut self) {
-        while self.cpu.step() {}
+        let now = Instant::now();
+        let mut elapsed = now.elapsed().as_secs();
+
+        while self.cpu.step() {
+            let new_elapsed = now.elapsed().as_secs();
+
+            if (new_elapsed != elapsed) {
+                elapsed = new_elapsed;
+                println!("Used cycles: {}", self.cpu.cycles);
+            }
+        }
+        println!("Used cycles: {}", self.cpu.cycles);
     }
-
-    //pub fn load_into_memory(&mut self, data: &str) {
-        //for (i, byte) in data.bytes().enumerate() {
-            //self.memory.write_byte(i, byte);
-        //}
-
-        //self.cpu.process_byte(0x69);
-        //self.cpu.process_byte(0x2A);
-        //self.cpu.process_byte(0x69);
-        //self.cpu.process_byte(0x45);
-    //}
 }
