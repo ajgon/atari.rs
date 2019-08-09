@@ -53,6 +53,7 @@ mod tay;
 mod tsx;
 mod txa;
 mod txs;
+mod tya;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -108,6 +109,7 @@ use tay::Tay;
 use tsx::Tsx;
 use txa::Txa;
 use txs::Txs;
+use tya::Tya;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -196,6 +198,7 @@ impl Mnemonics {
             0xBA => Box::new(Tsx::new(opcode)),
             0x8A => Box::new(Txa::new(opcode)),
             0x9A => Box::new(Txs::new(opcode)),
+            0x98 => Box::new(Tya::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
