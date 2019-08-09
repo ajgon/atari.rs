@@ -46,7 +46,8 @@ impl Mnemonic for Bpl {
         }
 
         let previous_pc_value = register.pc();
-        register.increment_pc_by(arguments[0] as u16);
+        let rel: i16 = if arguments[0] > 0x7f { arguments[0] as i16 - 0x100 } else { arguments[0] as i16 };
+        register.set_pc((register.pc() as i16 + rel) as u16);
 
         return if previous_pc_value & 0xFF00 == register.pc() & 0xFF00 { 3 } else { 4 };
     }
@@ -76,12 +77,27 @@ mod tests {
     }
 
     #[test]
-    fn test_relative_out_of_bonds() {
+    fn test_relative_negative() {
         let bpl = Bpl::new(0x10);
-        let arguments = vec![0x85];
+        let arguments = vec![0xF0];
         let mut memory = Memory::new();
         let mut register = Register::new();
-        register.increment_pc_by(0x80);
+
+        let mut message_bus = MessageBus::new(&mut memory);
+
+        let cycles = bpl.call(arguments, &mut register, &mut message_bus);
+
+        assert_eq!(0x05F0, register.pc());
+        assert_eq!(cycles, 4);
+    }
+
+    #[test]
+    fn test_relative_out_of_bonds() {
+        let bpl = Bpl::new(0x10);
+        let arguments = vec![0x7F];
+        let mut memory = Memory::new();
+        let mut register = Register::new();
+        register.increment_pc_by(0x86);
 
         let mut message_bus = MessageBus::new(&mut memory);
 
