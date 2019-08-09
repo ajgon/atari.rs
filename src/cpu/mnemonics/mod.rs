@@ -44,6 +44,7 @@ mod rts;
 mod sbc;
 mod sec;
 mod sed;
+mod sei;
 use adc::Adc;
 use and::And;
 use asl::Asl;
@@ -90,6 +91,7 @@ use rts::Rts;
 use sbc::Sbc;
 use sec::Sec;
 use sed::Sed;
+use sei::Sei;
 use crate::cpu::register::Register;
 use crate::message_bus::MessageBus;
 
@@ -169,6 +171,7 @@ impl Mnemonics {
             0xE9 | 0xE5 | 0xF5 | 0xEd | 0xFd | 0xF9 | 0xE1 | 0xF1 => Box::new(Sbc::new(opcode)),
             0x38 => Box::new(Sec::new(opcode)),
             0xF8 => Box::new(Sed::new(opcode)),
+            0x78 => Box::new(Sei::new(opcode)),
             _ => panic!("Unknown opcode numnber: 0x#{:x}", opcode)
         }
     }
