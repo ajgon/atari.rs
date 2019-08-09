@@ -44,9 +44,17 @@ impl<'a> Cpu<'a> {
         self.register.set_pc(((pch as u16) << 8) + pcl as u16);
     }
 
-    pub fn step(&mut self) {
+    pub fn step(&mut self) -> bool {
         let opcode = self.read_byte();
+
+        // @todo this goes away, it's for debug now
+        if opcode == 0 {
+            return false; // signal for atari to stop working
+        }
+
         let mnemonic = self.mnemonics.resolve_mnemonic_from_opcode(opcode);
+
+        //println!("${:x}: {:x}", self.register.pc() - 1 + 0x17, opcode);
         let mnemonic_length = mnemonic.determine_bytes();
         let mut mnemonic_data: Vec<u8> = Vec::new();
 
@@ -55,6 +63,7 @@ impl<'a> Cpu<'a> {
         }
 
         self.cycles += mnemonic.call(mnemonic_data, &mut self.register, &mut self.message_bus) as u64;
+        return true;
     }
 
     fn read_byte(&mut self) -> u8 {

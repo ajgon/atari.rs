@@ -17,6 +17,10 @@ impl<'a> Atari<'a> {
         self.cpu.cold_reset();
     }
 
+    pub fn work(&mut self) {
+        while self.cpu.step() {}
+    }
+
     //pub fn load_into_memory(&mut self, data: &str) {
         //for (i, byte) in data.bytes().enumerate() {
             //self.memory.write_byte(i, byte);

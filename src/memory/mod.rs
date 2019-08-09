@@ -11,6 +11,15 @@ impl Memory {
         return Memory { contents: vec![0; 65536] }
     }
 
+    pub fn contents(mut self, contents: Vec<u8>) -> Self {
+        self.contents = contents;
+        self
+    }
+
+    pub fn dump(self) -> Vec<u8> {
+        return self.contents;
+    }
+
     pub fn read_byte(&self, address: u16) -> u8 {
         return self.contents[address as usize];
     }
