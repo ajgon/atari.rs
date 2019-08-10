@@ -5,13 +5,22 @@ Status register format (P):
 +---+---+---+---+---+---+---+---+
 */
 
+const NEGATIVE_MASK: u8  = 0b1000_0000;
+const OVERFLOW_MASK: u8  = 0b0100_0000;
+const HARDWIRED_MASK: u8 = 0b0010_0000;
+const BREAK_MASK: u8     = 0b0001_0000;
+const DECIMAL_MASK: u8   = 0b0000_1000;
+const INTERRUPT_MASK: u8 = 0b0000_0100;
+const ZERO_MASK: u8      = 0b0000_0010;
+const CARRY_MASK: u8     = 0b0000_0001;
+
 #[derive(Debug)]
 pub struct Register {
     pc: u16, // Program Counter
     s: u8, // Stack Pointer
-    a: u8, // Accumulator
-    x: u8, // Index Register X
-    y: u8, // Index Register Y
+    pub a: u8, // Accumulator
+    pub x: u8, // Index Register X
+    pub y: u8, // Index Register Y
     p: u8 // Status Register
 }
 
@@ -21,15 +30,11 @@ impl Register {
     }
 
     pub fn pc(&self) -> u16 {
-        return self.pc;
+        self.pc
     }
 
     pub fn increment_pc(&mut self) {
         self.pc = self.pc.overflowing_add(1).0;
-    }
-
-    pub fn increment_pc_by(&mut self, amount: u16) {
-        self.pc = self.pc.overflowing_add(amount).0;
     }
 
     pub fn set_pc(&mut self, value: u16) {
@@ -37,7 +42,11 @@ impl Register {
     }
 
     pub fn s(&self) -> u8 {
-        return self.s;
+        self.s
+    }
+
+    pub fn set_s(&mut self, value: u8) {
+        self.s = value;
     }
 
     pub fn push_s(&mut self) {
@@ -48,156 +57,96 @@ impl Register {
         self.s = self.s.overflowing_add(1).0;
     }
 
-    pub fn set_s(&mut self, value: u8) {
-        self.s = value;
-    }
-
-    pub fn a(&self) -> u8 {
-        return self.a;
-    }
-
-    pub fn set_accumulator(&mut self, value: u8) {
-        self.a = value;
-    }
-
-    pub fn x(&self) -> u8 {
-        return self.x;
-    }
-
-    pub fn y(&self) -> u8 {
-        return self.y;
-    }
-
     pub fn p(&self) -> u8 {
-        return self.p;
+        self.p
     }
 
-    pub fn carry_bit(&self) -> bool {
-        return self.p & 0b00000001 != 0;
-    }
-
-    pub fn zero_bit(&self) -> bool {
-        return self.p & 0b00000010 != 0;
-    }
-
-    pub fn overflow_bit(&self) -> bool {
-        return self.p & 0b01000000 != 0;
-    }
-
-    pub fn decimal_bit(&self) -> bool {
-        return self.p & 0b00001000 != 0;
+    pub fn set_p(&mut self, value: u8) {
+        self.p = value | HARDWIRED_MASK;
     }
 
     pub fn negative_bit(&self) -> bool {
-        return self.p & 0b10000000 != 0;
+        self.p & NEGATIVE_MASK != 0
+    }
+
+    pub fn overflow_bit(&self) -> bool {
+        self.p & OVERFLOW_MASK != 0
+    }
+
+    pub fn break_bit(&self) -> bool {
+        self.p & BREAK_MASK != 0
+    }
+
+    pub fn decimal_bit(&self) -> bool {
+        self.p & DECIMAL_MASK != 0
+    }
+
+    pub fn interrupt_bit(&self) -> bool {
+        self.p & INTERRUPT_MASK != 0
+    }
+
+    pub fn zero_bit(&self) -> bool {
+        self.p & ZERO_MASK != 0
+    }
+
+    pub fn carry_bit(&self) -> bool {
+        self.p & CARRY_MASK != 0
     }
 
     pub fn set_negative_bit(&mut self, value: bool) {
         if value {
-            self.p |= 0b10000000;
+            self.p |= NEGATIVE_MASK
         } else {
-            self.p &= 0b01111111;
+            self.p &= !NEGATIVE_MASK
         }
     }
 
     pub fn set_overflow_bit(&mut self, value: bool) {
         if value {
-            self.p |= 0b01000000;
+            self.p |= OVERFLOW_MASK
         } else {
-            self.p &= 0b10111111;
-        }
-    }
-
-    pub fn set_decimal_bit(&mut self, value: bool) {
-        if value {
-            self.p |= 0b00001000;
-        } else {
-            self.p &= 0b11110111;
+            self.p &= !OVERFLOW_MASK
         }
     }
 
     pub fn set_break_bit(&mut self, value: bool) {
         if value {
-            self.p |= 0b00010000;
+            self.p |= BREAK_MASK
         } else {
-            self.p &= 0b11101111;
+            self.p &= !BREAK_MASK
+        }
+    }
+
+    pub fn set_decimal_bit(&mut self, value: bool) {
+        if value {
+            self.p |= DECIMAL_MASK
+        } else {
+            self.p &= !DECIMAL_MASK
         }
     }
 
     pub fn set_interrupt_bit(&mut self, value: bool) {
         if value {
-            self.p |= 0b00000100;
+            self.p |= INTERRUPT_MASK
         } else {
-            self.p &= 0b11111011;
+            self.p &= !INTERRUPT_MASK
         }
     }
 
     pub fn set_zero_bit(&mut self, value: bool) {
         if value {
-            self.p |= 0b00000010;
+            self.p |= ZERO_MASK
         } else {
-            self.p &= 0b11111101;
+            self.p &= !ZERO_MASK
         }
     }
 
     pub fn set_carry_bit(&mut self, value: bool) {
         if value {
-            self.p |= 0b00000001;
+            self.p |= CARRY_MASK
         } else {
-            self.p &= 0b11111110;
+            self.p &= !CARRY_MASK
         }
-    }
-
-    pub fn set_p(&mut self, value: u8) {
-        self.p = value | 0b0010_0000;
-    }
-
-    pub fn set_x(&mut self, value: u8) {
-        self.x = value;
-    }
-
-    pub fn set_y(&mut self, value: u8) {
-        self.y = value;
-    }
-
-    pub fn calculate_nz_bits(&mut self, base: u8) {
-        self.set_zero_bit(base == 0);
-        self.set_negative_bit(base > 127);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::Register;
-
-    #[test]
-    fn test_getters() {
-        let register = Register::new();
-        assert_eq!(register.pc(), 0x0600);
-        assert_eq!(register.s(), 0xFF);
-        assert_eq!(register.a(), 0x00);
-        assert_eq!(register.x(), 0x00);
-        assert_eq!(register.y(), 0x00);
-        assert_eq!(register.p(), 0x20);
-    }
-
-    #[test]
-    fn test_pc() {
-        let mut register = Register::new();
-
-        register.increment_pc();
-        assert_eq!(register.pc(), 0x0601);
-
-        register.increment_pc_by(14);
-        assert_eq!(register.pc(), 0x060F);
-    }
-
-    #[test]
-    fn test_a() {
-        let mut register = Register::new();
-
-        register.set_accumulator(0x15);
-        assert_eq!(register.a(), 0x15);
     }
 }
 
